@@ -19,19 +19,30 @@ Iniciar Sesión
 
                         <h3 class="mb-5">Iniciar Sesión</h3>
 
-                        <form>
-                        <div class="form-outline mb-4">
-                            <input type="email" id="typeEmailX-2" class="form-control form-control-lg" required />
-                            <label class="form-label" for="typeEmailX-2">Nombre de usuario - email</label>
-                        </div>
+                        <form method="post">
+                            {% csrf_token %}
 
-                        <div class="form-outline mb-4">
-                            <input type="password" id="typePasswordX-2" class="form-control form-control-lg" required />
-                            <label class="form-label" for="typePasswordX-2">Contraseña</label>
-                        </div>
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ form.non_field_errors }}</strong>
+                            </div>
+                            {%endif%}
 
-                        <button class="btn btn-primary btn-lg btn-block" style="width: 100%;" type="submit">Iniciar Sesión</button>
-                    </form>
+                            <div class="form-outline mb-4">
+                                <input type="email" id="typeEmailX-2" name="username"
+                                    class="form-control form-control-lg" required />
+                                <label class="form-label" for="typeEmailX-2">Correo Electronico</label>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <input type="password" id="typePasswordX-2" name="password"
+                                    class="form-control form-control-lg" required />
+                                <label class="form-label" for="typePasswordX-2">Contraseña</label>
+                            </div>
+
+                            <button class="btn btn-primary btn-lg btn-block" style="width: 100%;">Iniciar
+                                Sesión</button>
+                        </form>
                     </div>
 
                     <div class="center">
@@ -41,7 +52,7 @@ Iniciar Sesión
                     <div class="center mb-4">
                         <a class="link" href="{% url 'articulos' %}">Ir al menú principal</a>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

@@ -19,24 +19,56 @@ Registrarme
 
                         <h3 class="mb-5">Crear nueva cuenta</h3>
 
-                        <form>
-                        <div class="form-outline mb-4">
-                            <input type="email" id="typeEmailX-2" class="form-control form-control-lg" required />
-                            <label class="form-label" for="typeEmailX-2">Nombre de usuario - email</label>
-                        </div>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
 
-                        <div class="form-outline mb-4">
-                            <input type="password" id="typePasswordX-2" class="form-control form-control-lg" required />
-                            <label class="form-label" for="typePasswordX-2">Contraseña</label>
-                        </div>
+                            {% if form.errors %}
+                            {% for field in form %}
+                            {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                            {% endfor %}
+                            {% endfor %}
+                            {% endif %}
 
-                        <div class="form-outline mb-4">
-                            <input type="password" id="typePasswordX-2" class="form-control form-control-lg" required />
-                            <label class="form-label" for="typePasswordX-2">Confirmar Contraseña</label>
-                        </div>
+                            <div class="form-outline mb-4">
+                                <input type="text" id="nombre" name="first_name" class="form-control form-control-lg"
+                                    required />
+                                <label class="form-label" for="nombre">Nombres</label>
+                            </div>
 
-                        <button class="btn btn-primary btn-lg btn-block" style="width: 100%;" type="submit">Iniciar Sesión</button>
-                    </form>
+                            <div class="form-outline mb-4">
+                                <input type="text" id="username" name="username" class="form-control form-control-lg"
+                                    required />
+                                <label class="form-label" for="username">Nombre de Usuario</label>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <input type="email" id="email" name="email" class="form-control form-control-lg"
+                                    required />
+                                <label class="form-label" for="email">Corero Electronico</label>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <input type="file" name="image" class="form-control" id="imagen" required>
+                            </div>
+                            <label for="imagen" class="mb-4">Seleccione la imagen de perfil</label>
+
+                            <div class="form-outline mb-4">
+                                <input type="password" id="password1" name="password1"
+                                    class="form-control form-control-lg" required />
+                                <label class="form-label" for="password1">Contraseña</label>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <input type="password" id="password2" name="password2"
+                                    class="form-control form-control-lg" required />
+                                <label class="form-label" for="password2">Confirmar Contraseña</label>
+                            </div>
+
+                            <button class="btn btn-primary btn-lg btn-block" style="width: 100%;">Registrarme</button>
+                        </form>
                     </div>
 
                     <div class="center">
@@ -46,7 +78,7 @@ Registrarme
                     <div class="center mb-4">
                         <a class="link" href="{% url 'articulos' %}">Ir al menú principal</a>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -55,4 +87,3 @@ Registrarme
 
 
 {%endblock%}
-
