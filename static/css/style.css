@@ -1,0 +1,11 @@
+.center{
+  text-align: center;
+}
+
+.link{
+  text-decoration: none;
+}
+
+.link:hover{
+  text-decoration: underline;
+}
