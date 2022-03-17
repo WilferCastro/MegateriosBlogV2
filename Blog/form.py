@@ -30,12 +30,12 @@ class UserForm(UserCreationForm):
         }
 
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'w3-input'}),
-            'first_name': forms.TextInput(attrs={'class': 'w3-input'}),
-            'last_name': forms.TextInput(attrs={'class': 'w3-input'}),
-            'email': forms.EmailInput(attrs={'class': 'w3-input'}),
-            'password1': forms.PasswordInput(attrs={'class': 'w3-input'}),
-            'password2': forms.PasswordInput(attrs={'class': 'w3-input'}),
+            'username': forms.TextInput(),
+            'first_name': forms.TextInput(),
+            'last_name': forms.TextInput(),
+            'email': forms.EmailInput(),
+            'password1': forms.PasswordInput(),
+            'password2': forms.PasswordInput(),
         }
         
         
@@ -49,15 +49,18 @@ class ArticleForm(forms.ModelForm):
             'title',
             'photo',
             'introduction',
+            'author',
         ]
 
         labels = {
             'title': 'Titulo del articulo',
             'photo': 'Imagen del articulo',
             'introduction': 'Abrebocas',
+            'author': 'Autor',
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'w3-input'}),
-            'introduction': forms.TextInput(attrs={'class': 'w3-input'}),
+            'title': forms.TextInput(),
+            'introduction': forms.Textarea(),
+            'author': forms.Select()
         }

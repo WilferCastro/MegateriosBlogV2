@@ -10,10 +10,19 @@ from django.contrib.auth.views import LoginView
 
 #Pagina principal con los articulos
 def Articulos(request):
-    return render(request,"principal/articulos.html")
+    articles = Article.objects.select_related('author').order_by('-id')
+    return render(request,"principal/articulos.html",{'articles': articles})
 
 class InicioSesion(LoginView):
     template_name = 'principal/login.html'
+
+
+@login_required
+def MisArticulos(request, id_eje):
+    #take care --> -_-
+    print(id_eje)
+    articles=Article.objects.filter(author_id=id_eje).order_by('-id')
+    return render(request,"articulos/mis_articulos.html", {'articles': articles})
 
 
 class Registro(CreateView):
@@ -27,4 +36,20 @@ class NuevoArticulo(LoginRequiredMixin,CreateView):
     model = Article
     form_class=ArticleForm
     template_name="articulos/nuevo_articulo.html"
+    success_url=reverse_lazy('articulos')
+    
+    
+class EditarArticulo(LoginRequiredMixin,UpdateView):
+    model = Article
+    form_class=ArticleForm
+    template_name="articulos/editar_articulo.html"
+    context_object_name = 'article'
+    success_url=reverse_lazy('articulos')
+    
+    
+class EliminarArticulo(LoginRequiredMixin,DeleteView):
+    #take care --> -_-
+    model = Article
+    template_name="articulos/eliminar_articulo.html"
+    context_object_name = 'article'
     success_url=reverse_lazy('articulos')

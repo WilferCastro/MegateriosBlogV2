@@ -26,11 +26,11 @@ class Article(models.Model):
     author=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Autor')
     title=models.CharField(max_length=100,verbose_name='Titulo')
     photo=models.ImageField(upload_to='foto_articulos',verbose_name='imagen')
-    introduction=models.CharField(max_length=100, verbose_name='Introduccion')
+    introduction=models.CharField(max_length=400, verbose_name='Introduccion')
     date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha')
-    likes=models.IntegerField(verbose_name='Me gusta')
-    dislikes=models.IntegerField(verbose_name='No me gusta')
-    comments=models.IntegerField(verbose_name='Comentarios')
+    likes=models.IntegerField(verbose_name='Me gusta', default=0)
+    dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
+    comments=models.IntegerField(verbose_name='Comentarios',default=0)
     
     class Meta:
         verbose_name='Articulo'

@@ -10,23 +10,29 @@ Pagina Principal
 
 {%block content%}
 
-<div class="container mt-5 mb-5">
+{%if articles %}
+{%for i in articles %}
+
+<div class="container mt-5" style="margin-bottom: 80px;">
     <div class="d-flex justify-content-center row">
         <div class="d-flex flex-column col-md-8">
 
-            <div>
                 <div class="card bg-dark text-white">
-                    <img src="{% static 'img/98.jpg' %}" class="card-img" alt="...">
+                    <img src="{{ i.photo.url }}" class="card-img img-opacity" alt="Img Articulo">
                     <div class="card-img-overlay">
-                        <h4 class="card-title">Card title</h4>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                            content. This content is a little bit longer.</p>
-                        <p class="card-text">Last updated 3 mins ago</p>
+                        <h3 class="card-title">{{ i.title }}</h3>
+                        <p class="card-text">{{ i.introduction }}</p>
+                            
+                    </div>
+                    <div class="img-opacity p-1">
+                        <span class="card-text">Autor: <b>{{ i.author.username }}</b></span>
+                        <span class="card-text" style="float: right;">Publicado: <b>{{i.date|date:'Y-m-d'}}</b></span>
                     </div>
                 </div>
-            </div>
 
-            <ul class="list-inline d-sm-flex my-0 p-3 bg-white">
+        {% if user.is_authenticated %}
+        <div class="bg-white">
+            <ul class="list-inline d-sm-flex my-0 p-3">
                 <li class="list-inline-item g-mr-20">
                   <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
                     <i class="fa-solid fa-heart"></i><!--icon-->
@@ -45,8 +51,34 @@ Pagina Principal
                     0
                   </span>
                 </li>
-              </ul>
+            </ul>
 
+            <div class="coment-bottom bg-white p-2 px-4">
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+
+                <div class="d-flex flex-row add-comment-section mt-4 mb-4">
+                    <img class="img-fluid img-responsive rounded-circle mr-2" src="{{ i.author.image.url }}" width="38">
+                    <input type="text" class="form-control mr-3" placeholder="Ingresa un Comentario" required>
+                    <button class="btn btn-primary">Aceptar</button>
+                </div>
+                </form>
+
+                <div class="commented-section mt-2">
+                    zona de comentarios
+                </div>
+            </div>
+             
+        </div>
+        {%else%}
+
+        <div class="bg-white p-3">
+        <a href="{% url 'login' %}" class="link text-secondary">Inicia sesión para interactuar con las publicaciones</a>
+        </div>
+        {% endif %}
+            
+        <!--
             <div class="coment-bottom bg-white p-2 px-4">
                 <hr>
                 <form method="post">
@@ -61,7 +93,7 @@ Pagina Principal
                 <div class="commented-section mt-2">
                     <div class="d-flex flex-row align-items-center commented-user">
                         <img class="img-fluid img-responsive rounded-circle mr-2" src="https://i.imgur.com/qdiP4DB.jpg" width="38">
-                        <h5 class="mr-2">Corey oates</h5><span class="dot mb-1">
+                        <h5 class="mr-2">{{user.username}}</h5><span class="dot mb-1">
                         </span><span class="mb-1 ml-2">4 hours ago</span>
                     </div>
                     <div class="comment-text-sm"><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></div>
@@ -72,11 +104,124 @@ Pagina Principal
                     </div>
                 </div>
             </div>
+            -->
 
         </div>
     </div>
 </div>
 
+{% endfor %}
+
+{% else %}
+<div class="container mt-5" style="margin-bottom: 120px;">
+    <div class="d-flex justify-content-center row">
+        <div class="d-flex flex-column col-md-8">
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <h4><i class="fa-solid fa-circle-info"></i> No hay ningún articulo registrado. <a class="link" href="{% url 'nuevo_articulo' %}">Crear nuevo</a></h4>
+              </div>
+        </div>
+    </div>
+</div>         
+{% endif %}
+
+
+<div class="container mt-5" style="margin-bottom: 120px;">
+    <div class="d-flex justify-content-center row">
+        <div class="d-flex flex-column col-md-8">
+
+                <div class="card bg-dark text-white">
+                    <img src="{% static 'img/98.jpg' %}" class="card-img img-opacity" alt="Img Articulo">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">Card title</h3>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
+                            content. This content is a little bit longer.</p>
+                            
+                    </div>
+                    <div class="img-opacity p-1">
+                        <span class="card-text">Autor: <b>Example</b></span>
+                        <span class="card-text" style="float: right;">Publicado: <b>17/03/2022</b></span>
+                    </div>
+                </div>
+
+        {% if user.is_authenticated %}
+        <div class="bg-white">
+            <ul class="list-inline d-sm-flex my-0 p-3">
+                <li class="list-inline-item g-mr-20">
+                  <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                    <i class="fa-solid fa-heart"></i><!--icon-->
+                    0
+                  </a>
+                </li>
+                <li class="list-inline-item g-mr-20">
+                  <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                    <i class="fa-solid fa-heart-crack"></i></i><!--icon-->
+                    0
+                  </a>
+                </li>
+                <li class="list-inline-item ml-auto">
+                  <span class="text-primary">
+                    <i class="fa-solid fa-comment"></i><!--icon-->
+                    0
+                  </span>
+                </li>
+            </ul>
+
+            <div class="coment-bottom bg-white p-2 px-4">
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+
+                <div class="d-flex flex-row add-comment-section mt-4 mb-4">
+                    <img class="img-fluid img-responsive rounded-circle mr-2" src="https://i.imgur.com/qdiP4DB.jpg" width="38">
+                    <input type="text" class="form-control mr-3" placeholder="Ingresa un Comentario" required>
+                    <button class="btn btn-primary">Aceptar</button>
+                </div>
+                </form>
+
+                <div class="commented-section mt-2">
+                    zona de comentarios
+                </div>
+            </div>
+             
+        </div>
+        {%else%}
+
+        <div class="bg-white p-3">
+        <a href="{% url 'login' %}" class="link text-secondary">Inicia sesión para interactuar con las publicaciones</a>
+        </div>
+        {% endif %}
+            
+        <!--
+            <div class="coment-bottom bg-white p-2 px-4">
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+
+                <div class="d-flex flex-row add-comment-section mt-4 mb-4">
+                    <img class="img-fluid img-responsive rounded-circle mr-2" src="https://i.imgur.com/qdiP4DB.jpg" width="38">
+                    <input type="text" class="form-control mr-3" placeholder="Ingresa un Comentario" required>
+                    <button class="btn btn-primary">Aceptar</button>
+                </div>
+                </form>
+                <div class="commented-section mt-2">
+                    <div class="d-flex flex-row align-items-center commented-user">
+                        <img class="img-fluid img-responsive rounded-circle mr-2" src="https://i.imgur.com/qdiP4DB.jpg" width="38">
+                        <h5 class="mr-2">{{user.username}}</h5><span class="dot mb-1">
+                        </span><span class="mb-1 ml-2">4 hours ago</span>
+                    </div>
+                    <div class="comment-text-sm"><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></div>
+                    <div class="reply-section">
+                        <div class="d-flex flex-row align-items-center voting-icons"><i class="fa fa-sort-up fa-2x mt-3 hit-voting"></i><i class="fa fa-sort-down fa-2x mb-3 hit-voting"></i><span class="ml-2">10</span><span class="dot ml-2"></span>
+                            <h6 class="ml-2 mt-1">Reply</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            -->
+
+        </div>
+    </div>
+</div>
 
 
 {%endblock%}

@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+
+{% load static%}
+
+
+{%block title%}
+Mis Articulos
+{%endblock%}
+
+
+
+{%block content%}
+
+{%if articles %}
+{%for i in articles %}   
+
+<div class="container mt-5" style="margin-bottom: 120px;">
+    <div class="d-flex justify-content-center row">
+        <div class="d-flex flex-column col-md-8">
+
+                <div class="card bg-dark text-white">
+                    <img src="{{ i.photo.url }}" class="card-img img-opacity" alt="Img Articulo">
+                    <div class="card-img-overlay">
+                        <h3 class="card-title">{{i.title}}</h3>
+                        <p class="card-text">{{i.introduction}}</p>
+                    </div>
+                    <div class="img-opacity p-1">
+                        <span class="card-text">Autor: <b>{{i.author.username}}</b></span>
+                        <span class="card-text" style="float: right;">Publicado: <b>{{ i.date|date:'Y-m-d' }}</b></span>
+                    </div>
+                </div>
+
+          <div class="bg-white">
+            <ul class="list-inline d-sm-flex my-0 p-3" style="float: left;">
+                <li class="list-inline-item g-mr-20">
+                  <span class="text-primary">
+                    <i class="fa-solid fa-heart"></i>
+                    {{ i.likes }}
+                  </span>
+                </li>
+                <li class="list-inline-item g-mr-20">
+                  <span class="text-primary">
+                    <i class="fa-solid fa-heart-crack"></i></i>
+                    {{ i.dislikes }}
+                  </span>
+                </li>
+                <li class="list-inline-item ml-auto">
+                  <span class="text-primary">
+                    <i class="fa-solid fa-comment"></i>
+                    {{ i.comments }}
+                  </span>
+                </li>
+              </ul>
+
+              <div class="p-3" style="float: right;">
+                <a  href="{% url 'editar_articulo' pk=i.id %}" class="link mx-3 text-primary fw-bold">Editar</a>
+                <a href="{% url 'eliminar_articulo' pk=i.id %}" class="link text-danger fw-bold">Eliminar</a>
+              </div>
+
+          </div>
+
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+
+{% else %}
+<div class="container mt-5" style="margin-bottom: 120px;">
+    <div class="d-flex justify-content-center row">
+        <div class="d-flex flex-column col-md-8">
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <h4><i class="fa-solid fa-circle-info"></i> No ha registrado ningún articulo. <a class="link" href="{% url 'nuevo_articulo' %}">Crear nuevo</a></h4>
+              </div>
+        </div>
+    </div>
+</div>         
+{% endif %}
+
+
+
+
+{%endblock%}

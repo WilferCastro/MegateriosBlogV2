@@ -18,17 +18,23 @@
 <body class="bg-light">
 
     {%block header%}
-    <ul class="nav bg-white p-2">
+    <ul class="nav nav-pills bg-white p-2">
         <li class="nav-item">
-            <a class="nav-link text-primary fw-bold" aria-current="page" href="{% url 'articulos' %}">Blog Megaterios</a>
+            <a class="nav-link fw-bold {% if request.resolver_match.url_name == 'articulos' %}active{% endif %}" aria-current="page" href="{% url 'articulos' %}">Blog Megaterios</a>
         </li>
+        
+        {% if user.is_authenticated %}
         <li class="nav-item">
-            <a class="nav-link text-primary fw-bold" href="{% url 'nuevo_articulo' %}">Nuevo Articulo</a>
+            <a href="{% url 'mis_articulos' id_eje=user.id %}" class="nav-link fw-bold {% if request.resolver_match.url_name == 'mis_articulos' %}active{% endif %}"><i class="fa-solid fa-newspaper"></i> Mis Articulos</a>
         </li>
 
-        {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link fw-bold {% if request.resolver_match.url_name == 'nuevo_articulo' %}active{% endif %}" href="{% url 'nuevo_articulo' %}"><i class="fa-solid fa-file-circle-plus"></i> Nuevo Articulo</a>
+        </li>
+
+        
         <li class="nav-item ml-auto">
-            <a class="nav-link text-primary fw-bold" href="{% url 'logout' %}">Cerrar Sesión</a>
+            <a class="nav-link fw-bold btn-outline-primary" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
         </li>
 
         {% else %}
@@ -38,7 +44,7 @@
         </li>
         -->
         <li class="nav-item ml-auto">
-            <a class="nav-link text-primary fw-bold" href="{% url 'login' %}">Iniciar Sesión</a>
+            <a class="nav-link fw-bold" href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</a>
         </li>
         {% endif %}
     </ul>
