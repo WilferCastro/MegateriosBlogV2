@@ -2,3 +2,12 @@
 db.sqlite3
 /media
 /static/img
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

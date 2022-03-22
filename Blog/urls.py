@@ -14,5 +14,5 @@ urlpatterns = [
     path('eliminar-articulo/',EliminarArticulo, name='eliminar_articulo'),
     path('<int:pk>/<str:title>/',DetalleArticulo, name='detalle_articulo'),
     path('comentario/',Comentar, name='nuevo_comentario'),
-    
+    path('sub-comentario/',SubComentar, name='nuevo_subcomentario'),
 ]

@@ -16,6 +16,16 @@
         <div class="d-flex flex-column col-md-9 bg-white rounded-3">
             <h1 style="font-size: 48px;" class="text-center">{{ article.title|capfirst }}</h1>
             <p class="text-center fs-5">{{article.date|date:'Y-m-d'}} | Por: {{ article.author.username }}</p>
+
+            <div class="center">
+                <p style="font-size: 32px;">
+                    <a class="text-black" href="#"><i class="fa-brands fa-facebook-square"></i></a>
+                    <a class="text-black ms-3" href="#"><i class="fa-brands fa-pinterest-square"></i></a>
+                    <a class="text-black ms-3" href="#"><i class="fa-brands fa-twitter-square"></i></a>
+                    <a class="text-black ms-3" href="#"><i class="fa-solid fa-square-envelope"></i></a>
+                </p>
+            </div>
+
             <img src="{{ article.photo.url }}" class="img-fluid" alt="Article Image">
             <p class="text-center fs-3 fw-bold">{{ article.introduction|capfirst }}</p>
 
@@ -25,72 +35,138 @@
             <div class="bg-white">
                 <ul class="list-inline d-sm-flex my-0 p-3">
                     <li class="list-inline-item g-mr-20">
-                        <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                        <a class="link text-secondary" href="#" style="font-size: 24px;">
                             <i class="fa-solid fa-heart"></i>
-                            <!--icon-->
                             0
                         </a>
                     </li>
                     <li class="list-inline-item g-mr-20">
-                        <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                        <a class="link text-secondary" href="#" style="font-size: 24px;">
                             <i class="fa-solid fa-heart-crack"></i></i>
-                            <!--icon-->
                             0
                         </a>
                     </li>
                 </ul>
             </div>
 
-
             <div class="coment-bottom bg-white p-2 px-4">
                 <form method="post" action="{% url 'nuevo_comentario' %}">
                     {% csrf_token %}
-
                     <div class="d-flex flex-row add-comment-section mt-4 mb-4">
-                        <img class="mr-2" src="{{ user.image.url }}" width="38" height="38"
-                            style="border-radius: 50%;">
-                        <input type="text" name="comment" id="comment" class="form-control mr-3" placeholder="Ingresa un Comentario" required>
-                        <input type="hidden" name="title" id="title" class="form-control mr-3" value="{{article.title}}" required>
+                        <img class="mr-2" src="{{ user.image.url }}" width="38" height="38" style="border-radius: 50%;">
+                        <input type="text" name="comment" id="comment" class="form-control mr-3"
+                            placeholder="Ingresa un Comentario" required>
+                        <input type="hidden" name="title" id="title" class="form-control mr-3" value="{{article.title}}"
+                            required>
                         <button class="btn btn-primary">Aceptar</button>
                     </div>
 
                     <div class="input-group mb-3" style="display: none;">
-                        <label class="input-group-text" for="author">Options</label>
                         <select class="form-select" id="author" name="author">
-                          <option value="{{user.id}}" selected>{{user.email}}</option>
-                        </select>
-                    </div>
-        
-                    <div class="input-group mb-3" style="display: none;">
-                        <label class="input-group-text" for="article">Options</label>
-                        <select class="form-select" id="article" name="article">
-                          <option value="{{article.id}}" selected>{{article.title}}</option>
+                            <option value="{{user.id}}" selected>{{user.email}}</option>
                         </select>
                     </div>
 
+                    <div class="input-group mb-3" style="display: none;">
+                        <select class="form-select" id="article" name="article">
+                            <option value="{{article.id}}" selected>{{article.title}}</option>
+                        </select>
+                    </div>
                 </form>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Información</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="{% url 'nuevo_subcomentario' %}" method="post">
+                                {% csrf_token %}
+                                <div class=" modal-body">
+                                    <input type="hidden" readonly id="stitle" name="stitle" value="{{article.title}}">
+
+                                    <input type="hidden" type="hidden" readonly id="sid_comment" name="sid_comment">
+
+                                    <div class="input-group mb-3" style="display: none;">
+                                        <select class="form-select" id="sauthor" name="sauthor">
+                                            <option value="{{user.id}}" selected>{{user.email}}</option>
+                                        </select>
+                                    </div>
+                
+                                    <div class="input-group mb-3" style="display: none;">
+                                        <select class="form-select" id="sarticle" name="sarticle">
+                                            <option value="{{article.id}}" selected>{{article.title}}</option>
+                                        </select>
+                                    </div>
+
+                                    <textarea class="form-control" name="subcomment" id="subcomment" style="height: 120px" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Modal-->
+
                 <!--Comments Zone-->
                 <hr>
                 {%for i in article.comment_set.all %}
-                <div class="d-flex flex-row align-items-center commented-user">
-                    <img class="mr-2"
-                        src="{{i.author.image.url}}" width="38" height="38" style="border-radius: 50%;">
-                    <h5 class="mr-2">{{i.author.username}} - </h5>
-                    </span><span class="mb-1 ms-2">{{article.date|date:'Y-m-d'}}</span>
-                </div>
-                <div class="comment-text-sm">
-                    <span>{{i.comment}}</span>
-                </div>
-                <form method="post">
-                    {% csrf_token %}
-
-                    <div class="d-flex flex-row add-comment-section mt-4 mb-4 ms-5">
-                        <img class="mr-2" src="{{ user.image.url }}" width="38" height="38"
+                <div class="mb-4 bg-light rounded p-2">
+                    <div class="d-flex flex-row align-items-center commented-user">
+                        <img class="mr-2" src="{{i.author.image.url}}" width="34" height="34"
                             style="border-radius: 50%;">
-                        <input type="text" class="form-control mr-3" placeholder="Responder comentario" required>
-                        <button class="btn btn-primary">Aceptar</button>
+                        <h5 class="mr-2">{{i.author.username}} - </h5>
+                        </span><span class="mb-1 ms-2">{{i.date|date:'Y-m-d'}}</span>
                     </div>
-                </form>
+                    <div class="comment-text-sm mb-2">
+                        <p style="margin-left: 36px;">{{i.comment}}</p>
+                    </div>
+                    <div>
+                        <a class="link text-secondary" href="#" style="font-size: 18px;">
+                            <i class="fa-solid fa-heart"></i>
+                            0
+                        </a>
+                        <a class="link text-secondary ms-2" href="#" style="font-size: 18px;">
+                            <i class="fa-solid fa-heart-crack"></i></i>
+                            0
+                        </a>
+                        <a class="link text-secondary ms-3" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="document.getElementById('sid_comment').value='{{i.id}}'" >Responder a {{i.author.username}}</a>
+                    </div>
+                </div>
+
+                <!--Sub Comments Zone-->
+                {%for j in i.subcomment_set.all%}
+                <div class="ms-5 mb-4 bg-light rounded p-2">
+                    <div class="d-flex flex-row align-items-center commented-user">
+                        <img class="mr-2" src="{{j.author.image.url}}" width="34" height="34"
+                            style="border-radius: 50%;">
+                        <h5 class="mr-2">{{j.author.username}} - </h5>
+                        </span><span class="mb-1 ms-2">{{j.date|date:'Y-m-d'}}</span>
+                    </div>
+                    <div class="comment-text-sm mb-2">
+                        <p style="margin-left: 36px;">{{j.subcomment}}</p>
+                    </div>
+                    <div>
+                        <a class="link text-secondary" href="#" style="font-size: 18px;">
+                            <i class="fa-solid fa-heart"></i>
+                            0
+                        </a>
+                        <a class="link text-secondary ms-2" href="#" style="font-size: 18px;">
+                            <i class="fa-solid fa-heart-crack"></i></i>
+                            0
+                        </a>
+                    </div>
+                </div>
+                {%endfor%}
+                <!--End Sub Comments Zone-->
                 {%endfor%}
 
             </div>
@@ -102,7 +178,7 @@
             </div>
             {% endif %}
 
-            
+
 
         </div>
     </div>

@@ -1,6 +1,6 @@
 from datetime import timezone
 import datetime
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,TemplateView
 from .form import *
@@ -14,17 +14,8 @@ def Articulos(request):
     articles = Article.objects.select_related('author').order_by('-id')
     print(datetime.datetime.now(timezone.utc))
     
-    #for i in articles:
-        #print(i.date.strftime("%H:%M:%S"))
-        # for j in i.comment_set.all():
-        #     print("-----------------------------------------------------")
-        #     print(j)
-        #     print("Titulo del articulo: ",j.article)
-        #     print("Autor del comentario: ",j.author.username)
-        #     print("Comentarios: ",j.comment)
-        #     print("-----------------------------------------------------\n")
-    
     return render(request,"principal/articulos.html",{'articles': articles})
+
 
 class InicioSesion(LoginView):
     template_name = 'principal/login.html'
@@ -38,6 +29,7 @@ def MisArticulos(request, pk):
     else:
         return render(request,"articulos/error.html")
 
+
 class Registro(CreateView):
     model = User
     template_name="principal/registro.html"
@@ -50,6 +42,7 @@ class NuevoArticulo(LoginRequiredMixin,CreateView):
     form_class=ArticleForm
     template_name="articulos/nuevo_articulo.html"
     success_url=reverse_lazy('articulos')
+  
   
 @login_required
 def EditarArticulo(request,pk):
@@ -67,14 +60,14 @@ def EditarArticulo(request,pk):
     #caso contrario se renderizará la pagina con el articulo seleccionado
     if request.method == 'GET':
         if pk in li:
-            article=Article.objects.get(id=pk)
+            article=get_object_or_404(Article,id=pk)
             return render(request,"articulos/editar_articulo.html",{'article': article})
         else:
             return render(request,"articulos/error.html")
         
     #Cuando el usuario envia el formulario
     elif request.method == 'POST':
-        article=Article.objects.get(id=pk)
+        article=get_object_or_404(Article,id=pk)
         article.title=request.POST['title']
         article.photo=request.FILES['photo']
         article.introduction=request.POST['introduction']
@@ -106,6 +99,7 @@ def DetalleArticulo(request,title,pk):
     
     return render(request, 'articulos/detalle_articulo.html', {'article': article})
 
+
 @login_required
 def Comentar(request):
     aut=request.POST['author']
@@ -114,6 +108,18 @@ def Comentar(request):
     tit=request.POST['title']
     
     Comment.objects.create(author_id=aut,article_id=art,comment=com)
+    return redirect("detalle_articulo", title=tit, pk=art)
+
+
+@login_required
+def SubComentar(request):
+    fcom=request.POST['sid_comment']
+    aut=request.POST['sauthor']
+    art=request.POST['sarticle']
+    com=request.POST['subcomment']
+    tit=request.POST['stitle']
+    
+    SubComment.objects.create(author_id=aut,article_id=art,commentFather_id=fcom,subcomment=com)
     return redirect("detalle_articulo", title=tit, pk=art)
 
     

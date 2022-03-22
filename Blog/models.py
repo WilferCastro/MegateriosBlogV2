@@ -19,8 +19,7 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.email
-    
-    
+      
 
 class Article(models.Model):
     author=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Autor')
@@ -53,14 +52,13 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.comment
-    
-    
+       
     
 class SubComment(models.Model):
-    commentFather=models.ForeignKey(Comment, on_delete=models.CASCADE, verbose_name='Sub Comentario')
+    commentFather=models.ForeignKey(Comment, on_delete=models.CASCADE, verbose_name='Comentario Padre')
     author=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Autor')
     article=models.ForeignKey(Article, on_delete=models.CASCADE,verbose_name='Articulo')
-    subcomment=models.CharField(max_length=300, verbose_name='Comentario')
+    subcomment=models.CharField(max_length=300, verbose_name='Sub Comentario')
     date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
     
     class Meta:
