@@ -9,15 +9,7 @@ class UserForm(UserCreationForm):
     class Meta:
         model = User
 
-        fields = [
-            'username',
-            'first_name',
-            'last_name',
-            'email',
-            'password1',
-            'password2',
-            'image',
-        ]
+        fields = ['username','first_name','last_name','email','password1','password2','image',]
 
         labels = {
             'username': 'Nombre de Usuario',
@@ -45,22 +37,20 @@ class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
 
-        fields = [
-            'title',
-            'photo',
-            'introduction',
-            'author',
-        ]
+        fields = ['title','photo','introduction','author','content',]
 
         labels = {
             'title': 'Titulo del articulo',
             'photo': 'Imagen del articulo',
             'introduction': 'Abrebocas',
             'author': 'Autor',
+            'content': 'Contenido del articulo',
         }
 
         widgets = {
             'title': forms.TextInput(),
             'introduction': forms.Textarea(),
-            'author': forms.Select()
+            'author': forms.Select(),
+            'content': forms.Textarea(),
         }
+        

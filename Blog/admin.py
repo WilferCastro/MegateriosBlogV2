@@ -4,7 +4,7 @@ from .models import User,Article,Comment
 # Register your models here.
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display=("author","title","photo","introduction","date","likes","dislikes","comments")
+    list_display=("author","title","date","likes","dislikes","comments")
 
 class CommentAdmin(admin.ModelAdmin):
     list_display=("author","article","comment")

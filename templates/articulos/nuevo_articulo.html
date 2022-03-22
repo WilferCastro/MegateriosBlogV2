@@ -10,7 +10,7 @@ Crear Nuevo Articulo
 
 {%block content%}
 
-<section class="vh-100 bg-light">
+<section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -43,9 +43,14 @@ Crear Nuevo Articulo
                             </div>
                             <label for="photo" class="mb-4">Seleccione la imagen del articulo</label>
 
-                            <div class="form-floating">
+                            <div class="form-floating mb-5">
                                 <textarea class="form-control" name="introduction" id="introduction" style="height: 120px" required></textarea>
                                 <label for="introduction">Texto introductorio</label>
+                            </div>
+
+                            <div class="form-floating">
+                                <textarea class="form-control" name="content" id="content" style="height: 200px" required></textarea>
+                                <label for="introduction">Contenido del articulo</label>
                             </div>
 
                             <div class="input-group mb-3" style="display: none;">

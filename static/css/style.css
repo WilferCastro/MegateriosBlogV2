@@ -15,5 +15,14 @@ ul{
 }
 
 .img-opacity{
-  opacity: 0.5;
+  opacity: 0.4;
+}
+
+.bimage{
+background-image: url('../img/error.jpg');
+background-position: center center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+background-size: cover;
+background-color: #fff;
 }

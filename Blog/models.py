@@ -26,8 +26,9 @@ class Article(models.Model):
     author=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Autor')
     title=models.CharField(max_length=100,verbose_name='Titulo')
     photo=models.ImageField(upload_to='foto_articulos',verbose_name='imagen')
-    introduction=models.CharField(max_length=400, verbose_name='Introduccion')
-    date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha')
+    introduction=models.CharField(max_length=450, verbose_name='Introduccion')
+    content=models.CharField(max_length=900, verbose_name='Contenido')
+    date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
     likes=models.IntegerField(verbose_name='Me gusta', default=0)
     dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
     comments=models.IntegerField(verbose_name='Comentarios',default=0)
@@ -43,7 +44,8 @@ class Article(models.Model):
 class Comment(models.Model):
     author=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Autor')
     article=models.ForeignKey(Article, on_delete=models.CASCADE,verbose_name='Articulo')
-    comment=models.CharField(max_length=200, verbose_name='Comentario')
+    date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
+    comment=models.CharField(max_length=300, verbose_name='Comentario')
     
     class Meta:
         verbose_name='Comentario'
@@ -51,3 +53,19 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.comment
+    
+    
+    
+class SubComment(models.Model):
+    commentFather=models.ForeignKey(Comment, on_delete=models.CASCADE, verbose_name='Sub Comentario')
+    author=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Autor')
+    article=models.ForeignKey(Article, on_delete=models.CASCADE,verbose_name='Articulo')
+    subcomment=models.CharField(max_length=300, verbose_name='Comentario')
+    date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
+    
+    class Meta:
+        verbose_name='Sub Comentario'
+        verbose_name_plural='Sub Comentarios'
+    
+    def __str__(self):
+        return self.subcomment
