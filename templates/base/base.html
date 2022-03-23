@@ -20,7 +20,7 @@
     {%block header%}
     <ul class="nav nav-pills bg-white p-2">
         <li class="nav-item">
-            <a class="nav-link fw-bold {% if request.resolver_match.url_name == 'articulos' %}active{% endif %}" aria-current="page" href="{% url 'articulos' %}"> <img src="{% static 'img/megaterios.png' %}" alt="Logo" width="32"> Blog Megaterios</a>
+            <a class="nav-link fw-bold {% if request.resolver_match.url_name == 'articulos' %}active{% endif %}" aria-current="page" href="{% url 'articulos' %}"> <img src="{% static 'img/megaterios.png' %}" alt="Logo" width="28"> Blog Megaterios</a>
         </li>
         
         {% if user.is_authenticated %}
@@ -28,14 +28,23 @@
             <a href="{% url 'mis_articulos' pk=user.id %}" class="nav-link fw-bold {% if request.resolver_match.url_name == 'mis_articulos' %}active{% endif %}"><i class="fa-solid fa-newspaper"></i> Mis Articulos</a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item me-auto">
             <a class="nav-link fw-bold {% if request.resolver_match.url_name == 'nuevo_articulo' %}active{% endif %}" href="{% url 'nuevo_articulo' %}"><i class="fa-solid fa-file-circle-plus"></i> Nuevo Articulo</a>
         </li>
 
-        
-        <li class="nav-item ml-auto">
-            <a class="nav-link fw-bold btn-outline-primary" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
-        </li>
+        <div class=" dropdown">
+            
+            <button class="btn fw-bold text-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="rounded-circle" src="{{ user.image.url }}" width="28">
+                {{user.username}}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+            </ul>
+          </div>
+
+          
 
         {% else %}
         <!--

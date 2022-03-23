@@ -15,4 +15,6 @@ urlpatterns = [
     path('<int:pk>/<str:title>/',DetalleArticulo, name='detalle_articulo'),
     path('comentario/',Comentar, name='nuevo_comentario'),
     path('sub-comentario/',SubComentar, name='nuevo_subcomentario'),
+    path('article-nuevo-like/<int:value>/<int:pk>/',ArticleLike, name='nuevo_like'),
+    path('article-nuevo-dislike/<int:value>/<int:pk>/',ArticleDislike, name='nuevo_dislike'),
 ]

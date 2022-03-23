@@ -26,7 +26,7 @@ class Article(models.Model):
     title=models.CharField(max_length=100,verbose_name='Titulo')
     photo=models.ImageField(upload_to='foto_articulos',verbose_name='imagen')
     introduction=models.CharField(max_length=450, verbose_name='Introduccion')
-    content=models.CharField(max_length=900, verbose_name='Contenido')
+    content=models.CharField(max_length=2500, verbose_name='Contenido')
     date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
     likes=models.IntegerField(verbose_name='Me gusta', default=0)
     dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
@@ -67,3 +67,29 @@ class SubComment(models.Model):
     
     def __str__(self):
         return self.subcomment
+    
+    
+class ArticleLikes(models.Model):
+    article=models.ForeignKey(Article,on_delete=models.CASCADE)
+    author=models.ForeignKey(User,on_delete=models.CASCADE)
+    value=models.IntegerField(default=0)
+    
+    class Meta:
+        verbose_name='Articulos Like'
+        verbose_name_plural='Articulos Likes'
+
+
+class CommentLikes(models.Model):
+    comment=models.ForeignKey(Comment,on_delete=models.CASCADE)
+    author=models.ForeignKey(User,on_delete=models.CASCADE)
+    value=models.IntegerField(default=0)
+    
+    class Meta:
+        verbose_name='SubComentario Like'
+        verbose_name_plural='SubComentarios Likes'
+    
+
+class SubcommentLikes(models.Model):
+    subcomment=models.ForeignKey(SubComment,on_delete=models.CASCADE)
+    author=models.ForeignKey(User,on_delete=models.CASCADE)
+    value=models.IntegerField(default=0)

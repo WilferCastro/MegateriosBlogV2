@@ -13,8 +13,9 @@
 
 <div class="container mt-5" style="margin-bottom: 70px;">
     <div class="d-flex justify-content-center row">
-        <div class="d-flex flex-column col-md-9 bg-white rounded-3">
-            <h1 style="font-size: 48px;" class="text-center">{{ article.title|capfirst }}</h1>
+        <div class="d-flex flex-column col-md-11 bg-white rounded-3">
+            <h1 style="font-size: 48px;" class="text-center mt-5">{{ article.title|capfirst }}</h1>
+            <hr class="sep-3" />
             <p class="text-center fs-5">{{article.date|date:'Y-m-d'}} | Por: {{ article.author.username }}</p>
 
             <div class="center">
@@ -35,15 +36,15 @@
             <div class="bg-white">
                 <ul class="list-inline d-sm-flex my-0 p-3">
                     <li class="list-inline-item g-mr-20">
-                        <a class="link text-secondary" href="#" style="font-size: 24px;">
+                        <a class="link {%if articleLikes.value != 1%}text-secondary{%endif%}" href="{% url 'nuevo_like' value=1 pk=article.id %}" style="font-size: 24px;">
                             <i class="fa-solid fa-heart"></i>
-                            0
+                            {{article.likes}}
                         </a>
                     </li>
                     <li class="list-inline-item g-mr-20">
-                        <a class="link text-secondary" href="#" style="font-size: 24px;">
+                        <a class="link {%if articleLikes.value != 2%}text-secondary{%endif%}" href="{% url 'nuevo_dislike' value=2 pk=article.id %}" style="font-size: 24px;">
                             <i class="fa-solid fa-heart-crack"></i></i>
-                            0
+                            {{article.dislikes}}
                         </a>
                     </li>
                 </ul>
@@ -80,7 +81,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Información</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Responder comentario</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -171,7 +172,7 @@
 
             </div>
             {%else%}
-
+            <hr>
             <div class="bg-white p-3">
                 <a href="{% url 'login' %}" class="link text-secondary">Inicia sesión para interactuar con las
                     publicaciones</a>
