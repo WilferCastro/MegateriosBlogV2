@@ -15,7 +15,6 @@
     <div class="d-flex justify-content-center row">
         <div class="d-flex flex-column col-md-11 bg-white rounded-3">
             <h1 style="font-size: 48px;" class="text-center mt-5">{{ article.title|capfirst }}</h1>
-            <hr class="sep-3" />
             <p class="text-center fs-5">{{article.date|date:'Y-m-d'}} | Por: {{ article.author.username }}</p>
 
             <div class="center">
@@ -28,13 +27,13 @@
             </div>
 
             <img src="{{ article.photo.url }}" class="img-fluid" alt="Article Image">
-            <p class="text-center fs-3 fw-bold">{{ article.introduction|capfirst }}</p>
+            <p class="text-center fs-3 fw-bold my-4">{{ article.introduction|capfirst }}</p>
 
-            <p class="fs-4">{{ article.content }}</p>
+            <p class="fs-4 p-5">{{ article.content }}</p>
 
             {% if user.is_authenticated %}
-            <div class="bg-white">
-                <ul class="list-inline d-sm-flex my-0 p-3">
+            <div class="">
+                <ul class="list-inline d-sm-flex my-0 p-2">
                     <li class="list-inline-item g-mr-20">
                         <a class="link {%if articleLikes.value != 1%}text-secondary{%endif%}" href="{% url 'nuevo_like' value=1 pk=article.id %}" style="font-size: 24px;">
                             <i class="fa-solid fa-heart"></i>
@@ -131,13 +130,13 @@
                         <p style="margin-left: 36px;">{{i.comment}}</p>
                     </div>
                     <div>
-                        <a class="link text-secondary" href="#" style="font-size: 18px;">
+                        <a class="link text-secondary" href="{% url 'nuevo_likec' value=1 pk=i.id title=article.title pka=article.id %}" style="font-size: 18px;">
                             <i class="fa-solid fa-heart"></i>
-                            0
+                            {{i.likes}}
                         </a>
-                        <a class="link text-secondary ms-2" href="#" style="font-size: 18px;">
+                        <a class="link text-secondary ms-2" href="{% url 'nuevo_dislikec' value=2 pk=i.id title=article.title pka=article.id %}" style="font-size: 18px;">
                             <i class="fa-solid fa-heart-crack"></i></i>
-                            0
+                            {{i.dislikes}}
                         </a>
                         <a class="link text-secondary ms-3" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="document.getElementById('sid_comment').value='{{i.id}}'" >Responder a {{i.author.username}}</a>
                     </div>
@@ -154,16 +153,6 @@
                     </div>
                     <div class="comment-text-sm mb-2">
                         <p style="margin-left: 36px;">{{j.subcomment}}</p>
-                    </div>
-                    <div>
-                        <a class="link text-secondary" href="#" style="font-size: 18px;">
-                            <i class="fa-solid fa-heart"></i>
-                            0
-                        </a>
-                        <a class="link text-secondary ms-2" href="#" style="font-size: 18px;">
-                            <i class="fa-solid fa-heart-crack"></i></i>
-                            0
-                        </a>
                     </div>
                 </div>
                 {%endfor%}

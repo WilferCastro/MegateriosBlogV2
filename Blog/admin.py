@@ -7,17 +7,20 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display=("id","author","title","date","likes","dislikes","comments")
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display=("id","author","article","comment")
+    list_display=("id","author","article","comment","likes","dislikes")
     
-class SubCommentADmin(admin.ModelAdmin):
+class SubCommentAdmin(admin.ModelAdmin):
     list_display=("id","commentFather","author","article","subcomment")
     
-class ArticleLike(admin.ModelAdmin):
+class ArticleLikeAdmin(admin.ModelAdmin):
     list_display=("id","author","article","value")
+    
+class CommentLikeAdmin(admin.ModelAdmin):
+    list_display=("id","author","comment","value")
     
 admin.site.register(User)
 admin.site.register(Article,ArticleAdmin)
 admin.site.register(Comment,CommentAdmin)
-admin.site.register(SubComment,SubCommentADmin)
-admin.site.register(ArticleLikes,ArticleLike)
-admin.site.register(CommentLikes)
+admin.site.register(SubComment,SubCommentAdmin)
+admin.site.register(ArticleLikes,ArticleLikeAdmin)
+admin.site.register(CommentLikes,CommentLikeAdmin)

@@ -12,7 +12,6 @@ from django.contrib.auth.views import LoginView
 
 def Articulos(request):
     articles = Article.objects.select_related('author').order_by('-id')
-    print(datetime.datetime.now(timezone.utc))
     
     return render(request,"principal/articulos.html",{'articles': articles})
 
@@ -74,14 +73,7 @@ def EditarArticulo(request,pk):
         article.content=request.POST['content']
         article.save()
         return redirect("mis_articulos", pk=user_id)
-    
-# class EditarArticulo(LoginRequiredMixin,UpdateView):
-#     model = Article
-#     form_class=ArticleForm
-#     template_name="articulos/editar_articulo.html"
-#     context_object_name = 'article'
-#     success_url=reverse_lazy('articulos')
-    
+ 
     
 @login_required
 def EliminarArticulo(request):
@@ -210,3 +202,81 @@ def ArticleDislike(request,value,pk):
         article.save()
     
     return redirect("detalle_articulo",title=article.title, pk=pk)
+
+
+@login_required
+def CommentLike(request,value,pk,title,pka):
+    author_id=request.user.id
+    comment=get_object_or_404(Comment,id=pk)
+    commentLikes=""
+    
+    if CommentLikes.objects.filter(comment_id=pk,author_id=author_id):
+        commentLikes=CommentLikes.objects.get(comment_id=pk,author_id=author_id)
+        
+        if commentLikes.value == 0:
+            #No hay un like registrado y se le asigna uno
+            commentLikes.value=1
+            commentLikes.save()
+            comment.likes+=1
+            comment.save()
+        elif commentLikes.value == 1:
+            #Ya hay un like registrado y se remueve
+            commentLikes.value=0
+            commentLikes.save()
+            comment.likes-=1
+            comment.save()
+        elif commentLikes.value == 2:
+            #Si hay un dislike registrado, re remueve y se agrega un like
+            commentLikes.value=1
+            commentLikes.save()
+            comment.dislikes-=1
+            comment.likes+=1
+            comment.save()    
+                  
+    else:
+        commentLikes=CommentLikes.objects.create(comment_id=pk,author_id=author_id,value=value)
+        commentLikes.value=value
+        commentLikes.save()
+        comment.likes+=1
+        comment.save()
+    
+    return redirect("detalle_articulo",title=title, pk=pka)
+
+
+@login_required
+def CommentDislike(request,value,pk,title,pka):
+    author_id=request.user.id
+    comment=get_object_or_404(Comment,id=pk)
+    commentLikes=""
+    
+    if CommentLikes.objects.filter(comment_id=pk,author_id=author_id):
+        commentLikes=CommentLikes.objects.get(comment_id=pk,author_id=author_id)
+        
+        if commentLikes.value == 0:
+            #No hay un dislike registrado y se le asigna uno
+            commentLikes.value=2
+            commentLikes.save()
+            comment.dislikes+=1
+            comment.save()
+        elif commentLikes.value == 2:
+            #Ya hay un dislike registrado y se remueve
+            commentLikes.value=0
+            commentLikes.save()
+            comment.dislikes-=1
+            comment.save()
+        elif commentLikes.value == 1:
+            #Si hay un like registrado, re remueve y se agrega un dislike
+            commentLikes.value=2
+            commentLikes.save()
+            comment.likes-=1
+            comment.dislikes+=1
+            comment.save()    
+                  
+    else:
+        commentLikes=CommentLikes.objects.create(comment_id=pk,author_id=author_id,value=value)
+        commentLikes.value=value
+        commentLikes.save()
+        comment.dislikes+=1
+        comment.save()
+    
+    return redirect("detalle_articulo",title=title, pk=pka)

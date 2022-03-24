@@ -14,7 +14,7 @@ Pagina Principal
 <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
   {%for i in articles %}
   <a href="{% url 'detalle_articulo' title=i.title pk=i.pk %}" style="color: #000;text-decoration: none;">
-    <div class="col">
+    <div class="col shadow">
       <div class="card h-100">
         <img src="{{ i.photo.url }}" class="card-img-top" alt="HeadImage">
         <div class="card-body">

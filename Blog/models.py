@@ -45,6 +45,8 @@ class Comment(models.Model):
     article=models.ForeignKey(Article, on_delete=models.CASCADE,verbose_name='Articulo')
     date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
     comment=models.CharField(max_length=300, verbose_name='Comentario')
+    likes=models.IntegerField(verbose_name='Me gusta', default=0)
+    dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
     
     class Meta:
         verbose_name='Comentario'
@@ -60,6 +62,8 @@ class SubComment(models.Model):
     article=models.ForeignKey(Article, on_delete=models.CASCADE,verbose_name='Articulo')
     subcomment=models.CharField(max_length=300, verbose_name='Sub Comentario')
     date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
+    likes=models.IntegerField(verbose_name='Me gusta', default=0)
+    dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
     
     class Meta:
         verbose_name='Sub Comentario'
@@ -85,8 +89,8 @@ class CommentLikes(models.Model):
     value=models.IntegerField(default=0)
     
     class Meta:
-        verbose_name='SubComentario Like'
-        verbose_name_plural='SubComentarios Likes'
+        verbose_name='Comentario Like'
+        verbose_name_plural='Comentarios Likes'
     
 
 class SubcommentLikes(models.Model):
