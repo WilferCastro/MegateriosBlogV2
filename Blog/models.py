@@ -51,6 +51,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name='Comentario'
         verbose_name_plural='Comentarios'
+        ordering = ['-date']
     
     def __str__(self):
         return self.comment
@@ -68,6 +69,7 @@ class SubComment(models.Model):
     class Meta:
         verbose_name='Sub Comentario'
         verbose_name_plural='Sub Comentarios'
+        ordering = ['-date']
     
     def __str__(self):
         return self.subcomment

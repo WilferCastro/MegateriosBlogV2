@@ -1,20 +1,28 @@
-from datetime import timezone
-import datetime
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,TemplateView
 from .form import *
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+import datetime
 # Create your views here.
 
-def Articulos(request):
-    articles = Article.objects.select_related('author').order_by('-id')
-    
-    return render(request,"principal/articulos.html",{'articles': articles})
 
+# def Articulos(request):
+#     articles = Article.objects.select_related('author').order_by('-id')
+    
+#     return render(request,"principal/articulos.html",{'articles': articles})
+
+class Articulos(View):
+    
+    def get (self, request):
+        articles = Article.objects.select_related('author').order_by('-id')
+        return render(request,"principal/articulos.html",{'articles':articles})
+    
 
 class InicioSesion(LoginView):
     template_name = 'principal/login.html'
@@ -74,17 +82,17 @@ def EditarArticulo(request,pk):
         article.save()
         return redirect("mis_articulos", pk=user_id)
  
+ 
+class EliminarArticulo(LoginRequiredMixin, View):
     
-@login_required
-def EliminarArticulo(request):
-    #take care --> -_-
-    article_id=request.GET.get("id_article")
-    user_id=request.user.id
-    
-    article=get_object_or_404(Article,id=article_id)
-    article.delete()
-    return redirect("mis_articulos", pk=user_id)
-
+    def get(self,request):
+        article_id=request.GET.get('id_article')
+        article=get_object_or_404(Article,id=article_id)
+        #article.delete()
+        data = {'article_id': article_id}
+        
+        return JsonResponse(data)
+  
 
 def DetalleArticulo(request,title,pk):
     article=get_object_or_404(Article,id=pk)
@@ -95,36 +103,38 @@ def DetalleArticulo(request,title,pk):
     return render(request, 'articulos/detalle_articulo.html', {'article': article,'articleLikes':articleLikes})
 
 
-@login_required
-def Comentar(request):
-    aut=request.POST['author']
-    art=request.POST['article']
-    com=request.POST['comment']
-    tit=request.POST['title']
+class Comentar(LoginRequiredMixin, View):
     
-    article=get_object_or_404(Article,id=art)
-    article.comments+=1
-    article.save()
+    def get(self,request):
+        author_id=request.GET.get('author')
+        article_id=request.GET.get('article')
+        com=request.GET.get('comment')
+            
+        com=Comment.objects.create(author_id=author_id,article_id=article_id,comment=com)
+        article=get_object_or_404(Article,id=article_id)
+        article.comments+=1
+        article.save()
+        date=com.date.strftime("%Y-%m-%d")
+        data = {'id':com.id,'comment':com.comment,'author':com.author.username,'image':com.author.image.url,'date':date}
+            
+        return JsonResponse(data)
+        
+class SubComentar(LoginRequiredMixin, View):
     
-    Comment.objects.create(author_id=aut,article_id=art,comment=com)
-    return redirect("detalle_articulo", title=tit, pk=art)
-
-
-@login_required
-def SubComentar(request):
-    fcom=request.POST['sid_comment']
-    aut=request.POST['sauthor']
-    art=request.POST['sarticle']
-    com=request.POST['subcomment']
-    tit=request.POST['stitle']
-    
-    article=get_object_or_404(Article,id=art)
-    article.comments+=1
-    article.save()
-    
-    SubComment.objects.create(author_id=aut,article_id=art,commentFather_id=fcom,subcomment=com)
-    return redirect("detalle_articulo", title=tit, pk=art)
-
+    def get(self,request):
+        author_id=request.GET.get('author')
+        article_id=request.GET.get('article')
+        com=request.GET.get('comment')
+        father_id=request.GET.get('father')
+        
+        com=SubComment.objects.create(author_id=author_id,article_id=article_id,commentFather_id=father_id,subcomment=com)
+        article=get_object_or_404(Article,id=article_id)
+        article.comments+=1
+        article.save()
+        date=com.date.strftime("%Y-%m-%d")
+        data = {'father': father_id,'comment':com.subcomment,'author':com.author.username,'image':com.author.image.url,'date':date}
+        return JsonResponse(data)
+        
 
 @login_required
 def ArticleLike(request,value,pk):

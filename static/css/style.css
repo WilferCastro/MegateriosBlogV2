@@ -36,5 +36,17 @@ background-color: #fff;
 .shadow:hover{
 transform: scale(1.05);
 box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
 
+.div-center{
+  min-width: 800px;
+  height: 350px;
+  margin: auto;
+  background-color: #000;
+  opacity: 0.6;
+}
+.div-center-v2{
+  min-width: 100%;
+  height: auto;
+  color: #fff;
 }

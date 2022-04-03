@@ -7,6 +7,9 @@
 Mis Articulos
 {%endblock%}
 
+{%block image%}
+{%endblock%}
+
 
 
 {%block content%}
@@ -14,21 +17,21 @@ Mis Articulos
   {%if articles %}
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Información</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="{% url 'eliminar_articulo' %}"">
-        {%  csrf_token %}
-        <div class=" modal-body">
-          <input type="hidden" readonly id="id_article" name="id_article">
-          Seguro que desea eliminar este articulo?
+        <form id="form_delete" action="">
+          {% csrf_token %}
+        <div class="modal-body p-4">
+          <input type="text" id="id_article" name="id_article" hidden>
+         <p class="fs-3 text-center fw-bold">¿Seguro que desea eliminar este articulo?</p>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer justify-content-center">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <button id="btn_eliminar" class="btn btn-danger">Eliminar</button>
       </div>
       </form>
     </div>
@@ -37,7 +40,7 @@ Mis Articulos
 
 <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
 {%for i in articles %}
-<div class="col ">
+<div class="col" id="article{{i.id}}">
   <div class="card h-100 shadow">
     <img src="{{ i.photo.url }}" class="card-img-top" alt="HeadImage">
     <div class="card-body">
