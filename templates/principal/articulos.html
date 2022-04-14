@@ -11,6 +11,19 @@ Pagina Principal
 {%block content%}
 
 {%if articles %}
+
+<div class="card">
+  <section id="header" class="jumbotron text-center">
+      <div style="margin-top: 150px;">
+          <h1 class="display-3 text-white fw-bold">Megaterios Blog</h1>
+      <h3 class="lead text-white">“La curiosidad es la esencia de nuestra existencia”</h3>
+      <a href="#" class="btn-principal"><i class="fa-brands fa-facebook-square"></i></a>
+      <a href="#" class="btn-principal"><i class="fa-brands fa-twitter-square"></i></a>
+      <a href="#" class="btn-principal"><i class="fa-brands fa-instagram-square"></i></a>
+      </div>
+  </section>
+</div>
+
 <div class="row row-cols-1 row-cols-md-3 g-4 m-3">
   {%for i in articles %}
   <a href="{% url 'detalle_articulo' title=i.title pk=i.pk %}" style="color: #000;text-decoration: none;">
@@ -24,7 +37,7 @@ Pagina Principal
         <div class="p-2">
           <img class="img-fluid img-responsive rounded-circle mr-2" src="{{i.author.image.url}}" width="28">
             <span class="card-text">{{ i.author.username }}</span>
-            <span class="card-text" style="float: right;">{{i.date|date:'Y-m-d'}}</span>
+            <span class="card-text" style="float: right;"><i class="fa-solid fa-calendar-days"></i> {{i.date|date:'d-M-Y'}}</span>
         </div>
       </div>
     </div>

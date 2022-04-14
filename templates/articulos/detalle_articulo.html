@@ -35,48 +35,51 @@
             <p class="fs-4 p-5">{{ article.content }}</p>
 
             {% if user.is_authenticated %}
-            <div class="">
+            <div class="ms-3 bg-light p-3">
                 <ul class="list-inline d-sm-flex my-0 p-2">
                     <li class="list-inline-item g-mr-20">
-                        <a class="link {%if articleLikes.value != 1%}text-secondary{%endif%}" href="{% url 'nuevo_like' value=1 pk=article.id %}" style="font-size: 24px;">
+                        <button class="btn {% if articleLikes.value == 1 %}btn-primary{%else%}btn-outline-primary{%endif%}" style="font-size: 24px;" id="btn_like">
                             <i class="fa-solid fa-heart"></i>
-                            {{article.likes}}
-                        </a>
+                            {{article.likes}} Me gusta
+                        </button>
                     </li>
                     <li class="list-inline-item g-mr-20">
-                        <a class="link {%if articleLikes.value != 2%}text-secondary{%endif%}" href="{% url 'nuevo_dislike' value=2 pk=article.id %}" style="font-size: 24px;">
-                            <i class="fa-solid fa-heart-crack"></i></i>
-                            {{article.dislikes}}
-                        </a>
+                        <button class="btn {% if articleLikes.value == 2 %}btn-danger{%else%}btn-outline-danger{%endif%}" style="font-size: 24px;" id="btn_dislike">
+                            <i class="fa-solid fa-heart-crack"></i>
+                            {{article.dislikes}} No me gusta
+                        </button>
                     </li>
                 </ul>
+
+                <div>
+                    <form id="form_comentar" action="">
+                        {% csrf_token %}
+                        <div class="d-flex flex-row add-comment-section mt-4 mb-4">
+                            <img class="mr-2" src="{{ user.image.url }}" width="38" height="38" style="border-radius: 50%;">
+                            <input type="text" name="comment" id="comment" class="form-control mr-3"
+                                placeholder="Ingresa un Comentario" required>
+                            <input type="hidden" name="title" id="title" class="form-control mr-3" value="{{article.title}}"
+                                required>
+                            <button id="btn_comentar" class="btn btn-primary">Aceptar</button>
+                        </div>
+    
+                        <div class="input-group mb-3" style="display: none;">
+                            <select class="form-select" id="author" name="author">
+                                <option value="{{user.id}}" selected>{{user.email}}</option>
+                            </select>
+                        </div>
+    
+                        <div class="input-group mb-3" style="display: none;">
+                            <select class="form-select" id="article" name="article">
+                                <option value="{{article.id}}" selected>{{article.title}}</option>
+                            </select>
+                        </div>
+                    </form>
+                    
+                </div>
             </div>
 
             <div class="coment-bottom bg-white p-2 px-4">
-                <form id="form_comentar" action="">
-                    {% csrf_token %}
-                    <div class="d-flex flex-row add-comment-section mt-4 mb-4">
-                        <img class="mr-2" src="{{ user.image.url }}" width="38" height="38" style="border-radius: 50%;">
-                        <input type="text" name="comment" id="comment" class="form-control mr-3"
-                            placeholder="Ingresa un Comentario" required>
-                        <input type="hidden" name="title" id="title" class="form-control mr-3" value="{{article.title}}"
-                            required>
-                        <button id="btn_comentar" class="btn btn-primary">Aceptar</button>
-                    </div>
-
-                    <div class="input-group mb-3" style="display: none;">
-                        <select class="form-select" id="author" name="author">
-                            <option value="{{user.id}}" selected>{{user.email}}</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group mb-3" style="display: none;">
-                        <select class="form-select" id="article" name="article">
-                            <option value="{{article.id}}" selected>{{article.title}}</option>
-                        </select>
-                    </div>
-                </form>
-
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
@@ -92,7 +95,7 @@
                                 <div class=" modal-body">
                                     <input type="hidden" readonly id="stitle" name="stitle" value="{{article.title}}">
 
-                                    <input type="hidden" type="hidden" readonly id="sid_comment" name="sid_comment">
+                                    <input type="text" readonly id="sid_comment" name="sid_comment">
 
                                     <div class="input-group mb-3" style="display: none;">
                                         <select class="form-select" id="sauthor" name="sauthor">
@@ -119,11 +122,74 @@
                 </div>
                 <!--End Modal-->
 
+                <!-- Modal edit comment-->
+                <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel2">Editar comentario</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="" id="form_comments">
+                                <div class=" modal-body">
+
+                                    <input type="text" readonly id="evalue" name="evalue">
+                                    <input type="text" readonly id="eid_comment" name="eid_comment">
+
+                                    <textarea class="form-control" name="comment_text" id="comment_text" style="height: 120px" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" id="btn_ecomment" class="btn btn-primary">Aceptar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Modal edit comment-->
+
+                <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Información</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="form_deletecomment" action="">
+                        <div class="modal-body p-4">
+                          <input type="text" id="did_article" name="did_article" hidden>
+                          <input type="text" readonly id="dvalue" name="dvalue">
+                          <input type="text" readonly id="did_comment" name="did_comment">
+                         <p class="fs-3 text-center fw-bold">¿Seguro que desea eliminar este comentario?</p>
+                      </div>
+                      <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button id="btn_dcomment" class="btn btn-danger">Eliminar</button>
+                      </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
                 <!--Comments Zone-->
                 <hr>
                 <div id="comment_panel"></div>
                 {%for i in article.comment_set.all %}
-                <div class="mb-4 bg-light rounded p-2" id="comment_pane">
+                <div class="mb-4 bg-light rounded p-2" id="comment_pane{{i.id}}">
+                    {%if request.user.id == i.author.id%}
+                    <div class="btn-group" style="float: right;">
+                        <button type="button" class="btn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                          <li><button onclick="edditComment('{{i.id}}',0)" class="dropdown-item" type="button"><i class="fa-solid fa-pen-to-square"></i> Editar comentario</button></li>
+                          <li><button onclick="deleteComment('{{i.id}}',0)" id="btn_deletecomment" class="dropdown-item" type="button"><i class="fa-solid fa-trash-can"></i> Eliminar comentario</button></li>
+                        </ul>
+                      </div>
+                      {%endif%}
                     <div class="d-flex flex-row align-items-center commented-user">
                         <img class="mr-2" src="{{i.author.image.url}}" width="34" height="34"
                             style="border-radius: 50%;">
@@ -131,16 +197,16 @@
                         </span><span class="mb-1 ms-2"><i class="fa-solid fa-clock-rotate-left"></i>{{i.date|date:'Y-m-d'}}</span>
                     </div>
                     <div class="comment-text-sm mb-2">
-                        <p style="margin-left: 36px;">{{i.comment}}</p>
+                        <p id="commentp{{i.id}}" style="margin-left: 36px;">{{i.comment}}</p>
                     </div>
                     <div>
-                        <a class="link text-secondary" href="{% url 'nuevo_likec' value=1 pk=i.id title=article.title pka=article.id %}" style="font-size: 18px;">
+                        <a class="link text-secondary" href="#" style="font-size: 18px;">
                             <i class="fa-solid fa-heart"></i>
-                            {{i.likes}}
+                            {{i.likes}} Me gusta
                         </a>
-                        <a class="link text-secondary ms-2" href="{% url 'nuevo_dislikec' value=2 pk=i.id title=article.title pka=article.id %}" style="font-size: 18px;">
-                            <i class="fa-solid fa-heart-crack"></i></i>
-                            {{i.dislikes}}
+                        <a class="link text-secondary ms-2" href="#" style="font-size: 18px;">
+                            <i class="fa-solid fa-heart-crack"></i>
+                            {{i.dislikes}} No me gusta |
                         </a>
                         <a class="link text-secondary ms-3" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="document.getElementById('sid_comment').value='{{i.id}}'" >Responder a {{i.author.username}}</a>
                     </div>
@@ -150,7 +216,7 @@
 
                 <!--Sub Comments Zone-->
                 {%for j in i.subcomment_set.all%}
-                <div class="ms-5 mb-4 bg-light rounded p-2" id="subcomment_panel{{j.id}}">
+                <div class="delete{{i.id}} ms-5 mb-4 bg-light rounded p-2" id="subcomment_panel{{j.id}}">
                     <div class="d-flex flex-row align-items-center commented-user">
                         <img class="mr-2" src="{{j.author.image.url}}" width="34" height="34"
                             style="border-radius: 50%;">
@@ -181,4 +247,8 @@
 </div>
 
 
+{%endblock%}
+
+{%block extrajs%}
+    <script src="{% static 'js/app.js' %}"></script>
 {%endblock%}
