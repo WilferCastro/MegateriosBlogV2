@@ -14,17 +14,18 @@
 {%block content%}
 
 <div id="id01" class="w3-modal">
-    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-round-large" style="max-width:450px;margin-top: 30px;">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-round-large" style="max-width:450px;">
 
         <div class="w3-center"><br>
             <span class="w3-left fs-4 fw-bold ms-4">Inicia sesión para continuar</span>
-            <span onclick="document.getElementById('id01').style.display='none'"
-                class="xmodal" title="Close Modal"><i class="fa-solid fa-xmark"></i></span>
+            <span onclick="document.getElementById('id01').style.display='none'" class="xmodal" title="Close Modal"><i
+                    class="fa-solid fa-xmark"></i></span>
         </div>
-        <div class="w3-section p-4">
+        <div class="w3-section w3-center p-4">
             <hr>
-            <img src="{% static 'img/Megaterios-distor.png' %}" alt="Avatar" width="90">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis, iuiente laborum quaerat odio ducimus at eos quod cumque? Nemo.</p>
+            <img src="{% static 'img/image1.png' %}" alt="Avatar" width="200">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis, iuiente laborum quaerat odio ducimus
+                at eos quod cumque? Nemo.</p>
         </div>
 
         <div class="w3-container px-5">
@@ -36,97 +37,309 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Responder comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" id="form_subcomentar">
+                {% csrf_token %}
+                <div class=" modal-body">
+
+                    <input type="text" readonly id="sid_comment" name="sid_comment" hidden>
+
+                    <textarea class="form-control" name="subcomment" id="subcomment" style="height: 120px"
+                        required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="btn_subcomentar" class="btn w3-indigo">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--End Modal-->
+
+<!-- Modal edit comment-->
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Editar comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="post" id="form_editcomment">
+                {%csrf_token%}
+                <div class=" modal-body">
+
+                    <input type="text" readonly id="evalue" name="evalue" hidden>
+                    <input type="text" readonly id="eid_comment" name="eid_comment" hidden>
+
+                    <textarea class="form-control" name="comment_text" id="comment_text" style="height: 120px"
+                        required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="btn_ecomment" class="btn w3-indigo">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--End Modal edit comment-->
+
+<!--Comment Delete Modal-->
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form_deletecomment" method="post" action="">
+                {%csrf_token%}
+                <div class="modal-body p-4">
+                    <input type="text" readonly id="dvalue" name="dvalue" hidden>
+                    <input type="text" readonly id="did_comment" name="did_comment" hidden>
+                    <p class="fs-3 text-center fw-bold">¿Seguro que desea eliminar este comentario?</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="btn_dcomment" class="btn w3-red">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--End Modal-->
+
 <div class="w3-row" style="margin-top: 80px;">
 
     <div class="w3-col leftbar" style="width:20%">
         <div class="p-4">
-            <div class="hearts heart1">
-                <i class="fa-solid fa-heart fs-4"></i>
-            </div>
-            <span class="heartspan">5</span>
-            <div style="clear: both;" class="hearts heart2">
-                <i class="fa-solid fa-heart-crack fs-4"></i>
-            </div>
-            <span class="heartspan">8</span>
-            <div style="clear: both;" class="hearts heart3">
-                <i class="fa-solid fa-bookmark fs-4"></i>
-            </div>
-        </div>
-    </div>
+            {% if user.is_authenticated %}
+            <div class="hearts {% if articleLikes.value == 1 %}heart11{%else%}heart1{%endif%}" id="btn_like">
+                {%else%}
+                <div class="hearts heart1" onclick="document.getElementById('id01').style.display='block'">
+                    {%endif%}
+                    <i class="fa-solid fa-heart fs-4"></i>
+                </div>
+                <span id="span_likes" class="heartspan">{{article.likes}}</span>
 
-    <div class="w3-col w3-white" style="width:50%">
-        <img src="{{ article.photo.url }}" class="w3-round-large" style="width: 100%;height: 400px;"
-            alt="Article Image">
-        <div class="p-3">
-            <div class="d-flex flex-row user-info">
-                <img src="{{article.author.image.url}}" width="38" height="38" style="border-radius: 50%;">
-                <div class="d-flex flex-column justify-content-start ml-2">
-                    <span class="d-block fw-bold name ms-2 fs-5">{{ article.author.username}}</span>
-                    <span class="date text-black-50 ms-2"><small>Publicado el
-                            {{article.date|date:'d M Y'}}</small></span>
+                {% if user.is_authenticated %}
+                <div style="clear: both;" class="hearts {% if articleLikes.value == 2 %}heart22{%else%}heart2{%endif%}"
+                    id="btn_dislike">
+                    {%else%}
+                    <div style="clear: both;" class="hearts heart2"
+                        onclick="document.getElementById('id01').style.display='block'">
+                        {%endif%}
+                        <i class="fa-solid fa-heart-crack fs-4"></i>
+                    </div>
+                    <span id="span_dislikes" class="heartspan">{{article.dislikes}}</span>
+
+                    <div style="clear: both;" class="hearts heart3">
+                        <i class="fa-solid fa-bookmark fs-4"></i>
+                    </div>
                 </div>
             </div>
-            <div class="my-5">
-                <h1 style="font-size: 48px;" class="text-center">{{ article.title|capfirst }}</h1>
-            </div>
-            <div>
-                <a class="tags" href="#">#Python</a>
-                <a class="tags" href="#">#JavaScript</a>
-                <a class="tags" href="#">#Ruby</a>
-                <a class="tags" href="#">#C++</a>
-            </div>
-            <div class="mt-5">
-                <p class="fs-4">{{ article.content }}</p><br><br>
-                <hr>
-            </div>
 
-            <div class="panel">
-                <h3>Comentarios (0)</h3>
-                <div class="panel-body">
-                    <form action="">
-                        <textarea class="form-control" rows="2" placeholder="Escribe un comentario" required></textarea>
-                        <div class="mar-top clearfix">
-                            {% if user.is_authenticated %}
-                            <button class="btn btn-sm w3-indigo w3-right mt-2" type="submit">
-                                <i class="fa fa-pencil fa-fw"></i> Comentar
-                            </button>
-                            {%else%}
-                            <button class="btn btn-sm w3-indigo w3-right mt-2" type="button"
-                                onclick="document.getElementById('id01').style.display='block'">
-                                <i class="fa fa-pencil fa-fw"></i> Comentar
-                            </button>
-                            {% endif %}
+            <!--PANEL CENTRAL-->
+            <div class="w3-col w3-white" style="width:50%">
+                <img src="{{ article.photo.url }}" class="w3-round-large" style="width: 100%;height: 400px;"
+                    alt="Article Image">
+                <div class="p-3">
+                    <div class="d-flex flex-row user-info">
+                        <img src="{{article.author.image.url}}" width="38" height="38" style="border-radius: 50%;">
+                        <div class="d-flex flex-column justify-content-start ml-2">
+                            <span class="d-block fw-bold name ms-2 fs-5">{{ article.author.username}}</span>
+                            <span class="date text-black-50 ms-2"><small>Publicado el
+                                    {{article.date|date:'d M Y'}}</small></span>
                         </div>
-                    </form>
+                    </div>
+                    <div class="my-5">
+                        <h1 style="font-size: 48px;" class="text-center">{{ article.title|capfirst }}</h1>
+                    </div>
+                    <div>
+                        <a class="tags" href="#">#Python</a>
+                        <a class="tags" href="#">#JavaScript</a>
+                        <a class="tags" href="#">#Ruby</a>
+                        <a class="tags" href="#">#C++</a>
+                    </div>
+                    <div class="mt-5">
+                        <p class="fs-4">{{ article.content }}</p><br><br>
+                        <hr>
+                    </div>
+
+                    <div class="panel">
+                        <h3>Comentarios ( <span id="total_comments">{{total_comments}}</span> )</h3>
+                        <div class="panel-body">
+                            <form action="" method="post" id="form_comentar">
+                                {%csrf_token%}
+                                <textarea class="form-control" rows="2" name="comment" id="comment"
+                                    placeholder="Escribe un comentario" required></textarea>
+
+                                <div class="input-group mb-3" style="display: none;">
+                                    <select class="form-select" id="author_id" name="author_id">
+                                        <option value="{{user.id}}" selected>{{user.email}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-group mb-3" style="display: none;">
+                                    <select class="form-select" id="article_id" name="article_id">
+                                        <option value="{{article.id}}" selected>{{article.title}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="mar-top clearfix">
+                                    {% if user.is_authenticated %}
+                                    <button class="btn btn-sm w3-indigo w3-right mt-2" type="submit">
+                                        <i class="fa fa-pencil fa-fw"></i> Comentar
+                                    </button>
+                                    {%else%}
+                                    <button class="btn btn-sm w3-indigo w3-right mt-2" type="button"
+                                        onclick="document.getElementById('id01').style.display='block'">
+                                        <i class="fa fa-pencil fa-fw"></i> Comentar
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </form>
+                        </div>
+                        <!--Comments Zone-->
+                        <hr>
+                        <div id="comment_panel"></div>
+                        {%for i in article.comment_set.all %}
+                        <div class="mb-4 bg-light rounded p-2" id="comment_pane{{i.id}}">
+                            {%if request.user.id == i.author.id and user.is_authenticated%}
+                            <div class="btn-group" style="float: right;">
+                                <button type="button" class="btn" data-bs-toggle="dropdown" data-bs-display="static"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-lg-end">
+                                    <li><button onclick="edditComment('{{i.id}}',0)" class="dropdown-item"
+                                            type="button"><i class="fa-solid fa-pen-to-square"></i> Editar
+                                            comentario</button></li>
+                                    <li><button onclick="deleteComment('{{i.id}}',0)" id="btn_deletecomment"
+                                            class="dropdown-item" type="button"><i class="fa-solid fa-trash-can"></i>
+                                            Eliminar comentario</button></li>
+                                </ul>
+                            </div>
+                            {%endif%}
+                            <div class="d-flex flex-row align-items-center commented-user">
+                                <img class="mr-2" src="{{i.author.image.url}}" width="34" height="34"
+                                    style="border-radius: 50%;">
+                                <h5 class="mr-2">{{i.author.username}} - </h5>
+                                <small class="mb-1 ms-2 text-secondary"><i class="fa-solid fa-clock-rotate-left"></i>
+                                    {{i.date|date:'d-m, Y'}} <span id="span_edited{{i.id}}">{%if i.edited%}|
+                                        editado{%endif%}</span></small>
+                            </div>
+                            <div class="comment-text-sm mb-2">
+                                <p id="commentp{{i.id}}" style="margin-left: 36px;">{{i.comment|capfirst}}</p>
+                            </div>
+                            {%if user.is_authenticated%}
+                            <div>
+                                <a class="link text-secondary" href="#" style="font-size: 18px;margin-left: 35px;">
+                                    <i class="fa-solid fa-heart"></i>
+                                    {{i.likes}}
+                                </a>
+                                <a class="link text-secondary ms-2" href="#" style="font-size: 18px;">
+                                    <i class="fa-solid fa-heart-crack"></i>
+                                    {{i.dislikes}}
+                                </a>
+                                <a class="link text-secondary ms-3 w3-right me-3 w3-hover-text-indigo" href="#"
+                                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    onclick="document.getElementById('sid_comment').value='{{i.id}}'">
+                                    <i class="fa-solid fa-reply"></i> Responder
+                                </a>
+                            </div>
+                            {%else%}
+                            <div>
+                                <span class="link text-secondary" style="font-size: 18px;margin-left: 35px;"
+                                    onclick="document.getElementById('id01').style.display='block'">
+                                    <i class="fa-solid fa-heart"></i>
+                                    {{i.likes}}
+                                </span>
+                                <span class="link text-secondary ms-2" style="font-size: 18px;"
+                                    onclick="document.getElementById('id01').style.display='block'">
+                                    <i class="fa-solid fa-heart-crack"></i>
+                                    {{i.dislikes}}
+                                </span>
+                                <span class="link text-secondary ms-3 w3-right me-3 w3-hover-text-indigo"
+                                    onclick="document.getElementById('id01').style.display='block'">
+                                    <i class="fa-solid fa-reply"></i> Responder
+                                </span>
+                            </div>
+                            {%endif%}
+                        </div>
+
+                        <div id="subcomment_panel{{i.id}}"></div>
+
+                        <!--Sub Comments Zone-->
+                        {%for j in i.subcomment_set.all%}
+                        <div class="delete{{i.id}} ms-5 mb-4 bg-light rounded p-2" id="subcomment_pane{{j.id}}">
+                            {%if request.user.id == i.author.id and user.is_authenticated%}
+                            <div class="btn-group" style="float: right;">
+                                <button type="button" class="btn" data-bs-toggle="dropdown" data-bs-display="static"
+                                    aria-expanded="false">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-lg-end">
+                                    <li><button onclick="edditComment('{{j.id}}',1)" class="dropdown-item"
+                                            type="button"><i class="fa-solid fa-pen-to-square"></i> Editar
+                                            comentario</button></li>
+                                    <li><button onclick="deleteComment('{{j.id}}',1)" id="btn_deletecomment"
+                                            class="dropdown-item" type="button"><i class="fa-solid fa-trash-can"></i>
+                                            Eliminar comentario</button></li>
+                                </ul>
+                            </div>
+                            {%endif%}
+                            <div class="d-flex flex-row align-items-center commented-user">
+                                <img class="mr-2" src="{{j.author.image.url}}" width="34" height="34"
+                                    style="border-radius: 50%;">
+                                <h5 class="mr-2">{{j.author.username}} - </h5>
+                                <small class="mb-1 ms-2 text-secondary"><i class="fa-solid fa-clock-rotate-left"></i>
+                                    {{j.date|date:'d-m, Y'}} <span id="sspan_edited{{j.id}}">{%if j.edited%}|
+                                        editado{%endif%}</span></small>
+                            </div>
+                            <div class="comment-text-sm mb-2">
+                                <p id="subcommentp{{j.id}}" style="margin-left: 36px;">{{j.subcomment|capfirst}}</p>
+                            </div>
+                        </div>
+                        {%endfor%}
+                        <!--End Sub Comments Zone-->
+                        {%endfor%}
+                    </div>
+                </div>
+
+            </div>
+
+            <!--PANEL LATERAL DERECHO-->
+            <div class="w3-col px-3 rightbar" id="rightbar" style="width:30%">
+                <div class="w3-white w3-round-large w3-padding">
+                    <div class="d-flex flex-row user-info">
+                        <img src="{{article.author.image.url}}" width="48" height="48" style="border-radius: 50%;">
+                        <span class="d-block fw-bold name fs-4 mt-1 ms-2">{{ article.author.username}}</span>
+                    </div>
+                    <button class="w3-button w3-indigo w3-block mt-3 fw-bold w3-round-large">Seguir</button>
+
+                    <div class="mt-3">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex hic aliquam blanditiis, atque
+                            quam
+                            ducimus totam voluptatem debitis incidunt eaque, facere voluptatibus ratione nihil iusto non
+                            commodi
+                            laborum possimus eum.</p>
+                        <h5>Se unió</h5>
+                        <h6>{{article.author.date_joined|date:'d F, Y'}}</h6>
+                    </div>
                 </div>
             </div>
+
         </div>
-
-    </div>
-
-
-
-
-    <div class="w3-col px-3 rightbar" style="width:30%">
-        <div class="w3-white w3-round-large w3-padding">
-            <div class="d-flex flex-row user-info">
-                <img src="{{article.author.image.url}}" width="48" height="48" style="border-radius: 50%;">
-                <span class="d-block fw-bold name fs-3 mt-1 ms-2">{{ article.author.username}}</span>
-            </div>
-            <button class="w3-button w3-indigo w3-block mt-3 fw-bold w3-round-large">Seguir</button>
-
-            <div class="mt-3">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex hic aliquam blanditiis, atque quam
-                    ducimus totam voluptatem debitis incidunt eaque, facere voluptatibus ratione nihil iusto non commodi
-                    laborum possimus eum.</p>
-                <h5>Se unió</h5>
-                <h6>{{article.author.date_joined|date:'d F, Y'}}</h6>
-            </div>
-        </div>
-    </div>
-
-
-</div>
+  
 
 {%endblock%}
 

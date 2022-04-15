@@ -9,6 +9,10 @@ class User(AbstractUser):
     image=models.ImageField(upload_to='foto_autores',null=True)
     
     email = models.EmailField(('email address'), unique=True)
+    location=models.CharField(max_length=45, null=True, blank=True)
+    biography = models.CharField(max_length=250, null=True, blank=True)
+    facebook=models.CharField(max_length=250,null=True, blank=True)
+    instagram=models.CharField(max_length=250, null=True, unique=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -19,6 +23,10 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.email
+    
+    
+class Follower(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Seguidor')   
       
 
 class Article(models.Model):
@@ -31,6 +39,7 @@ class Article(models.Model):
     likes=models.IntegerField(verbose_name='Me gusta', default=0)
     dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
     comments=models.IntegerField(verbose_name='Comentarios',default=0)
+    edited=models.BooleanField(default=False,verbose_name='Editado')
     
     class Meta:
         verbose_name='Articulo'
@@ -47,6 +56,7 @@ class Comment(models.Model):
     comment=models.CharField(max_length=300, verbose_name='Comentario')
     likes=models.IntegerField(verbose_name='Me gusta', default=0)
     dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
+    edited=models.BooleanField(default=False,verbose_name='Editado')
     
     class Meta:
         verbose_name='Comentario'
@@ -65,6 +75,7 @@ class SubComment(models.Model):
     date=models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creacion')
     likes=models.IntegerField(verbose_name='Me gusta', default=0)
     dislikes=models.IntegerField(verbose_name='No me gusta',default=0)
+    edited=models.BooleanField(default=False,verbose_name='Editado')
     
     class Meta:
         verbose_name='Sub Comentario'

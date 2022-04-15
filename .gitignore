@@ -1,7 +1,6 @@
 */__pycache__
 db.sqlite3
 /media
-/static/img
 
 # Environments
 .env

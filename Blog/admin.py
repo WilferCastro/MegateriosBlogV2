@@ -7,10 +7,10 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display=("id","author","title","date","likes","dislikes","comments")
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display=("id","author","article","comment","likes","dislikes")
+    list_display=("id","author","article","comment","likes","dislikes","edited")
     
 class SubCommentAdmin(admin.ModelAdmin):
-    list_display=("id","commentFather","author","article","subcomment")
+    list_display=("id","author","article","subcomment","edited")
     
 class ArticleLikeAdmin(admin.ModelAdmin):
     list_display=("id","author","article","value")

@@ -1,21 +1,14 @@
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView,TemplateView
+from django.views.generic import CreateView
 from .form import *
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-import datetime
 # Create your views here.
-
-
-# def Articulos(request):
-#     articles = Article.objects.select_related('author').order_by('-id')
-    
-#     return render(request,"principal/articulos.html",{'articles': articles})
 
 class Articulos(View):
     
@@ -53,17 +46,12 @@ class NuevoArticulo(LoginRequiredMixin,CreateView):
   
 @login_required
 def EditarArticulo(request,pk):
-    #Obtener id del usuario logueado
     user_id=request.user.id
-    #Obtener todos los articulos de dicho usuario
     articles_id=Article.objects.filter(author_id=user_id)
-    #Crear y llenar la lista con los id de los articulos relacionados con el usuario 
     li=[]
     for i in articles_id:
        li.append(i.id)
        
-    #Si el usuario cambia el id por un articulo que no es suyo, se renderiza el error,
-    #caso contrario se renderizará la pagina con el articulo seleccionado
     if request.method == 'GET':
         if pk in li:
             article=get_object_or_404(Article,id=pk)
@@ -71,7 +59,6 @@ def EditarArticulo(request,pk):
         else:
             return render(request,"articulos/error.html")
         
-    #Cuando el usuario envia el formulario
     elif request.method == 'POST':
         article=get_object_or_404(Article,id=pk)
         article.title=request.POST['title']
@@ -92,86 +79,88 @@ class EliminarArticulo(LoginRequiredMixin, View):
         
         return JsonResponse(data)
   
-
-def DetalleArticulo(request,title,pk):
-    article=get_object_or_404(Article,id=pk)
-    articleLikes=""
-    if ArticleLikes.objects.filter(article_id=pk,author_id=request.user.id):
-        articleLikes=ArticleLikes.objects.get(article_id=pk,author_id=request.user.id)
+class DetalleArticulo(View):
     
-    return render(request, 'articulos/detalle.html', {'article': article,'articleLikes':articleLikes})
-
+    def get(self,request,title,pk):
+        article=get_object_or_404(Article,id=pk)
+        com=Comment.objects.filter(article_id=pk).count()
+        sub=SubComment.objects.filter(article_id=pk).count()
+        total_comments=com+sub
+        articleLikes=""
+        if ArticleLikes.objects.filter(article_id=pk,author_id=request.user.id):
+            articleLikes=ArticleLikes.objects.get(article_id=pk,author_id=request.user.id)
+        
+        return render(request, 'articulos/detalle.html', {'article': article,'articleLikes':articleLikes,'total_comments':total_comments})
+    
 
 class Comentar(LoginRequiredMixin, View):
     
-    def get(self,request):
-        author_id=request.GET.get('author')
-        article_id=request.GET.get('article')
-        com=request.GET.get('comment')
-            
+    def post(self,request):
+        author_id=request.POST.get('author_id')
+        article_id=request.POST.get('article_id')
+        com=request.POST.get('comment')
+        
         com=Comment.objects.create(author_id=author_id,article_id=article_id,comment=com)
-        article=get_object_or_404(Article,id=article_id)
-        article.comments+=1
-        article.save()
-        date=com.date.strftime("%Y-%m-%d")
-        data = {'id':com.id,'comment':com.comment,'author':com.author.username,'image':com.author.image.url,'date':date}
+        date=com.date.strftime("%d-%m, %Y")
+        data = {'id':com.id,'comment':com.comment.capitalize(),'author':com.author.username,'image':com.author.image.url,'date':date}
             
         return JsonResponse(data)
     
+    
 class EditarComentarios(LoginRequiredMixin, View):
     
-    def get(self,request):
-        value = request.GET.get('value')
-        id_comment = request.GET.get('id_comment')
-        id_author=request.GET.get('author')
-        id_article=request.GET.get('article')
-        com=request.GET.get('comment')
+    def post(self,request):
+        value = request.POST.get('evalue')
+        id_comment = request.POST.get('eid_comment')
+        id_article = request.POST.get('article_id')
+        com=request.POST.get('comment_text')
         data={'action':'comment'}
         if value == '0':
-            comment =Comment.objects.get(id=id_comment,article_id=id_article,author_id=id_author)
+            comment =Comment.objects.get(id=id_comment,article_id=id_article)
             comment.comment=com
+            comment.edited=True
             comment.save()
         else:
+            comment =SubComment.objects.get(id=id_comment,article_id=id_article)
+            comment.subcomment=com
+            comment.edited=True
+            comment.save()
             data['action']='subcomment'
-            print("LO VAMOS A EDITAR SUBCOMMENT XD ")
             
         return JsonResponse(data)
     
     
 class EliminarComentarios(LoginRequiredMixin, View):
     
-    def get(self,request):
-        value = request.GET.get('value')
-        id_comment = request.GET.get('id_comment')
-        id_author=request.GET.get('author')
-        id_article=request.GET.get('article')
+    def post(self,request):
+        value = request.POST.get('dvalue')
+        id_comment = request.POST.get('did_comment')
+        id_article = request.POST.get('article_id')
         data={'action':'comment'}
         if value == '0':
-            comment =Comment.objects.get(id=id_comment,article_id=id_article,author_id=id_author)
+            comment =Comment.objects.get(id=id_comment,article_id=id_article)
             comment.delete()
         else:
+            comment =SubComment.objects.get(id=id_comment,article_id=id_article)
+            comment.delete()
             data['action']='subcomment'
-            print("LO VAMOS A ELIMINAR SUBCOMMENT XD ")
             
         return JsonResponse(data)
- 
+    
         
 class SubComentar(LoginRequiredMixin, View):
     
-    def get(self,request):
-        author_id=request.GET.get('author')
-        article_id=request.GET.get('article')
-        com=request.GET.get('comment')
-        father_id=request.GET.get('father')
+    def post(self,request):
+        author_id=request.POST.get('author_id')
+        article_id=request.POST.get('article_id')
+        comment_id=request.POST.get('sid_comment')
+        com=request.POST.get('subcomment')
         
-        com=SubComment.objects.create(author_id=author_id,article_id=article_id,commentFather_id=father_id,subcomment=com)
-        article=get_object_or_404(Article,id=article_id)
-        article.comments+=1
-        article.save()
-        date=com.date.strftime("%Y-%m-%d")
-        data = {'father': father_id,'comment':com.subcomment,'author':com.author.username,'image':com.author.image.url,'date':date}
+        com=SubComment.objects.create(author_id=author_id,article_id=article_id,commentFather_id=comment_id,subcomment=com)
+        date=com.date.strftime("%d-%m, %Y")
+        data = {'id':com.id,'comment_id': comment_id,'comment':com.subcomment.capitalize(),'author':com.author.username,'image':com.author.image.url,'date':date}
         return JsonResponse(data)
-        
+    
 
 @login_required
 def ArticleLike(request):

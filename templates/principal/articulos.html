@@ -12,7 +12,7 @@ Pagina Principal
 
 {%if articles %}
 
-<div class="card">
+<div class="card" style="margin-top: 55px;">
   <section id="header" class="jumbotron text-center">
       <div style="margin-top: 150px;">
           <h1 class="display-3 text-white fw-bold">Megaterios Blog</h1>
@@ -31,7 +31,7 @@ Pagina Principal
       <div class="card h-100">
         <img src="{{ i.photo.url }}" class="card-img-top" alt="HeadImage">
         <div class="card-body">
-            <h4 class="card-title">{{ i.title }}</h4>
+            <h4 class="card-title fw-bold">{{ i.title }}</h4>
             <p class="card-text">{{ i.introduction }}</p>
         </div>
         <div class="p-2">
@@ -46,7 +46,7 @@ Pagina Principal
 
 
 {% else %}
-<div class="container mt-5" style="margin-bottom: 120px;">
+<div class="container" style="margin-top: 80px;">
     <div class="d-flex justify-content-center row">
         <div class="d-flex flex-column col-md-8">
             <div class="alert alert-primary d-flex align-items-center" role="alert">

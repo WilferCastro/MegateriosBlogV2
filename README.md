@@ -1,4 +1,4 @@
-# Megaterios Blog 
+# Megaterios Blog V2
 ## Un blog totalmente diferente...
 
 Un blog donde podrás exponer tus ideas y comunicar información que muchas personas deberían saber, interactuar con artículos de diferentes autores con ideas que pueden llegar a ser tu agrado, expresarte libremente si tienes otros puntos de vista sobre lo que estás leyendo, colaborar y formar parte de una gran comunidad.
