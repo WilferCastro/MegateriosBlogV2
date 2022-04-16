@@ -9,7 +9,7 @@ class UserForm(UserCreationForm):
     class Meta:
         model = User
 
-        fields = ['username','first_name','last_name','email','password1','password2','image',]
+        fields = ['username','first_name','last_name','email','password1','password2','image','biography']
 
         labels = {
             'username': 'Nombre de Usuario',
@@ -19,6 +19,7 @@ class UserForm(UserCreationForm):
             'password1': 'Contraseña',
             'password2': 'Confirmar Contraseña',
             'image': 'Seleccione su imagen',
+            'biography': 'Describete',
         }
 
         widgets = {
@@ -28,6 +29,7 @@ class UserForm(UserCreationForm):
             'email': forms.EmailInput(),
             'password1': forms.PasswordInput(),
             'password2': forms.PasswordInput(),
+            'biography': forms.Textarea(),
         }
         
         

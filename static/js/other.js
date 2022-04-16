@@ -1,3 +1,0 @@
-function edditComment(){
-    alert("hjrhgrjsjbjkg")
-}

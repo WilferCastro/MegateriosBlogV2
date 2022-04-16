@@ -1,12 +1,10 @@
-from distutils.command.upload import upload
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.forms import IntegerField
 
 
 # Create your models here.
 class User(AbstractUser):
-    image=models.ImageField(upload_to='foto_autores',null=True)
+    image=models.ImageField(upload_to='foto_autores',null=True,default='foto_autores/avatar.jpg')
     
     email = models.EmailField(('email address'), unique=True)
     location=models.CharField(max_length=45, null=True, blank=True)

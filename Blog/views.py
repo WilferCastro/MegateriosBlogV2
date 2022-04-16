@@ -30,12 +30,19 @@ def MisArticulos(request, pk):
         return render(request,"articulos/error.html")
 
 
-class Registro(CreateView):
-    model = User
-    template_name="principal/registro.html"
-    form_class=UserForm
-    success_url=reverse_lazy('articulos')
+class Registro(View):
     
+    def get(self,request):
+        return render(request,"principal/registro.html")
+    
+    def post(self,request):
+        form = UserForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"ok":"oj"})
+        else:
+            return JsonResponse(form.errors, status=400)
+
     
 class NuevoArticulo(LoginRequiredMixin,CreateView):
     model = Article
