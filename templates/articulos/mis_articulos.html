@@ -23,7 +23,7 @@ Mis Articulos
           <h5 class="modal-title" id="exampleModalLabel">Información</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="form_delete" action="">
+        <form id="form_delete" action="" method="post">
           {% csrf_token %}
         <div class="modal-body p-4">
           <input type="text" id="id_article" name="id_article" hidden>
@@ -108,5 +108,5 @@ Mis Articulos
 
 
 {%block extrajs%}
-    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/mis_articulos.js' %}"></script>
 {%endblock%}

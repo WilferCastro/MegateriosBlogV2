@@ -7,7 +7,7 @@ from .form import *
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth import authenticate, login
 # Create your views here.
 
 class Articulos(View):
@@ -16,18 +16,31 @@ class Articulos(View):
         articles = Article.objects.select_related('author').order_by('-id')
         return render(request,"principal/articulos.html",{'articles':articles})
     
+    
+class InicioSesion(View):
+    
+    def get(self,request):
+        return render(request, 'principal/login.html')
+    
+    def post(self,request):
+        us=request.POST.get("username")
+        pas=request.POST.get("password")
+        user = authenticate(username=us, password=pas)
+        if user is not None:
+            login(request,user)
+            return JsonResponse({"ok":'oj'})
+        else:
+            return JsonResponse({"error":"Verifique su usuario y contraseña e intente nuevamente."})
 
-class InicioSesion(LoginView):
-    template_name = 'principal/login.html'
 
-
-@login_required
-def MisArticulos(request, pk):
-    if request.user.id == pk:
-        articles=Article.objects.filter(author_id=pk).order_by('-id')
-        return render(request,"articulos/mis_articulos.html", {'articles': articles})
-    else:
-        return render(request,"articulos/error.html")
+class MisArticulos(LoginRequiredMixin,View):
+    
+    def get(self,request,pk):
+        if request.user.id == pk:
+            articles=Article.objects.filter(author_id=pk).order_by('-id')
+            return render(request,"articulos/mis_articulos.html", {'articles': articles})
+        else:
+            return render(request,"articulos/error.html")
 
 
 class Registro(View):
@@ -78,13 +91,14 @@ def EditarArticulo(request,pk):
  
 class EliminarArticulo(LoginRequiredMixin, View):
     
-    def get(self,request):
-        article_id=request.GET.get('id_article')
+    def post(self,request):
+        article_id=request.POST.get('id_article')
         article=get_object_or_404(Article,id=article_id)
         #article.delete()
         data = {'article_id': article_id}
         
         return JsonResponse(data)
+  
   
 class DetalleArticulo(View):
     
@@ -167,98 +181,101 @@ class SubComentar(LoginRequiredMixin, View):
         date=com.date.strftime("%d-%m, %Y")
         data = {'id':com.id,'comment_id': comment_id,'comment':com.subcomment.capitalize(),'author':com.author.username,'image':com.author.image.url,'date':date}
         return JsonResponse(data)
-    
 
-@login_required
-def ArticleLike(request):
-    author_id=request.user.id
-    article_id=request.GET.get('id_article')
-    value = request.GET.get('value')
-    article=get_object_or_404(Article,id=article_id)
-    articleLikes=""
+
+class ArticleLike(LoginRequiredMixin,View):
     
-    if ArticleLikes.objects.filter(article_id=article_id,author_id=author_id):
-        articleLikes=ArticleLikes.objects.get(article_id=article_id,author_id=author_id)
+    def get(self,request):
+        author_id=request.user.id
+        article_id=request.GET.get('id_article',2)
+        value = request.GET.get('value',1)
+        article=get_object_or_404(Article,id=article_id)
+        articleLikes=""
         
-        if articleLikes.value == 0:
-            #No hay un like registrado y se le asigna uno
-            articleLikes.value=1
+        
+        if ArticleLikes.objects.filter(article_id=article_id,author_id=author_id):
+            articleLikes=ArticleLikes.objects.get(article_id=article_id,author_id=author_id)
+            
+            if articleLikes.value == 0:
+                #No hay un like registrado y se le asigna uno
+                articleLikes.value=1
+                articleLikes.save()
+                article.likes+=1
+                article.save()
+                articleLikes="Like"
+            elif articleLikes.value == 1:
+                #Ya hay un like registrado y se remueve
+                articleLikes.value=0
+                articleLikes.save()
+                article.likes-=1
+                article.save()
+                articleLikes="None"
+            elif articleLikes.value == 2:
+                #Si hay un dislike registrado, re remueve y se agrega un like
+                articleLikes.value=1
+                articleLikes.save()
+                article.dislikes-=1
+                article.likes+=1
+                article.save()   
+                articleLikes="DislikeRemove" 
+                    
+        else:
+            articleLikes=ArticleLikes.objects.create(article_id=article_id,author_id=author_id,value=value)
+            articleLikes.value=value
             articleLikes.save()
             article.likes+=1
             article.save()
-            articleLikes="Like"
-        elif articleLikes.value == 1:
-            #Ya hay un like registrado y se remueve
-            articleLikes.value=0
-            articleLikes.save()
-            article.likes-=1
-            article.save()
-            articleLikes="None"
-        elif articleLikes.value == 2:
-            #Si hay un dislike registrado, re remueve y se agrega un like
-            articleLikes.value=1
-            articleLikes.save()
-            article.dislikes-=1
-            article.likes+=1
-            article.save()   
-            articleLikes="DislikeRemove" 
-                  
-    else:
-        articleLikes=ArticleLikes.objects.create(article_id=article_id,author_id=author_id,value=value)
-        articleLikes.value=value
-        articleLikes.save()
-        article.likes+=1
-        article.save()
-        articleLikes="Like" 
-        
-    data = {'like': articleLikes,'likes':article.likes,'dislikes':article.dislikes}
-    return JsonResponse(data)
+            articleLikes="Like" 
+            
+        data = {'like': articleLikes,'likes':article.likes,'dislikes':article.dislikes}
+        return JsonResponse(data)
 
 
-@login_required
-def ArticleDislike(request):
-    author_id=request.user.id
-    article_id=request.GET.get('id_article')
-    value = request.GET.get('value')
-    article=get_object_or_404(Article,id=article_id)
-    articleLikes=""
+class ArticleDislike(LoginRequiredMixin,View):
     
-    if ArticleLikes.objects.filter(article_id=article_id,author_id=author_id):
-        articleLikes=ArticleLikes.objects.get(article_id=article_id,author_id=author_id)
+    def get(self,request):
+        author_id=request.user.id
+        article_id=request.GET.get('id_article',None)
+        value = request.GET.get('value',1)
+        article=get_object_or_404(Article,id=article_id)
+        articleLikes=""
         
-        if articleLikes.value == 0:
-            #No hay un dislike registrado y se le asigna uno
-            articleLikes.value=2
+        if ArticleLikes.objects.filter(article_id=article_id,author_id=author_id):
+            articleLikes=ArticleLikes.objects.get(article_id=article_id,author_id=author_id)
+            
+            if articleLikes.value == 0:
+                #No hay un dislike registrado y se le asigna uno
+                articleLikes.value=2
+                articleLikes.save()
+                article.dislikes+=1
+                article.save()
+                articleLikes="Dislike"
+            elif articleLikes.value == 2:
+                #Ya hay un dislike registrado y se remueve
+                articleLikes.value=0
+                articleLikes.save()
+                article.dislikes-=1
+                article.save()
+                articleLikes="None"
+            elif articleLikes.value == 1:
+                #Si hay un like registrado, re remueve y se agrega un dislike
+                articleLikes.value=2
+                articleLikes.save()
+                article.likes-=1
+                article.dislikes+=1
+                article.save()    
+                articleLikes="LikeRemove"
+                    
+        else:
+            articleLikes=ArticleLikes.objects.create(article_id=article_id,author_id=author_id,value=value)
+            articleLikes.value=value
             articleLikes.save()
             article.dislikes+=1
             article.save()
             articleLikes="Dislike"
-        elif articleLikes.value == 2:
-            #Ya hay un dislike registrado y se remueve
-            articleLikes.value=0
-            articleLikes.save()
-            article.dislikes-=1
-            article.save()
-            articleLikes="None"
-        elif articleLikes.value == 1:
-            #Si hay un like registrado, re remueve y se agrega un dislike
-            articleLikes.value=2
-            articleLikes.save()
-            article.likes-=1
-            article.dislikes+=1
-            article.save()    
-            articleLikes="LikeRemove"
-                  
-    else:
-        articleLikes=ArticleLikes.objects.create(article_id=article_id,author_id=author_id,value=value)
-        articleLikes.value=value
-        articleLikes.save()
-        article.dislikes+=1
-        article.save()
-        articleLikes="Dislike"
-    
-    data = {'like': articleLikes,'likes':article.likes,'dislikes':article.dislikes}
-    return JsonResponse(data)
+        
+        data = {'like': articleLikes,'likes':article.likes,'dislikes':article.dislikes}
+        return JsonResponse(data)
 
 
 @login_required

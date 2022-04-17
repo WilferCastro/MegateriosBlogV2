@@ -1,4 +1,6 @@
 {% extends 'base/base.html' %}
+{%load static%}
+
 
 {%block title%}
 Iniciar Sesión
@@ -10,54 +12,36 @@ Iniciar Sesión
 
 {%block content%}
 
-<section class="vh-100">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card shadow-2-strong" style="border-radius: 1rem;">
-                    <div class="card-body p-5 text-center">
+<div class="form1">
+    <form action="" method="post" id="form_login">
+        {%csrf_token%}
 
-                        <h3 class="mb-5">Iniciar Sesión</h3>
-
-                        <form method="post">
-                            {% csrf_token %}
-
-                            {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                <strong>{{ form.non_field_errors }}</strong>
-                            </div>
-                            {%endif%}
-
-                            <div class="form-outline mb-4">
-                                <input type="email" id="typeEmailX-2" name="username"
-                                    class="form-control form-control-lg" required />
-                                <label class="form-label" for="typeEmailX-2">Correo Electronico</label>
-                            </div>
-
-                            <div class="form-outline mb-4">
-                                <input type="password" id="typePasswordX-2" name="password"
-                                    class="form-control form-control-lg" required />
-                                <label class="form-label" for="typePasswordX-2">Contraseña</label>
-                            </div>
-
-                            <button class="btn btn-primary btn-lg btn-block" style="width: 100%;">Iniciar
-                                Sesión</button>
-                        </form>
-                    </div>
-
-                    <div class="center">
-                        <p>No tienes una cuenta? <a class="link" href="{% url 'registro' %}">Registrarme.</a></p>
-                    </div>
-
-                    <div class="center mb-4">
-                        <a class="link" href="{% url 'articulos' %}">Ir al menú principal</a>
-                    </div>
-
-                </div>
-            </div>
+        <div class="w3-row w3-margin-bottom">
+            <img src="{% static 'img/Megaterios-distor.png' %}" alt="Image" width="64px">
+            <span class="fs-2">Inicia sesión con tu cuenta</span>
         </div>
-    </div>
-</section>
+        
+
+        <label for="username" class="fw-bold text-secondary">Correo Electrónico</label>
+        <input type="text" class="linput" required id="username" name="username">
+
+        <label for="password1" class="fw-bold text-secondary">Contraseña</label>
+        <label onclick="showPass()" class="eye"><i id="icon_eye" class="fa-solid fa-eye"></i></label>
+        <input type="password" class="linput" required id="password" name="password">
+
+        <button type="submit" class="lbutton">Ingresar</button>
+
+    </form>
+    <p class="w3-center fs-5">No tengo una cuenta. <a href="{% url 'registro' %}" class="link2">Registrarme</a></p>
+        <p class="w3-center fs-5"><a href="{% url 'articulos' %}" class="link2">Ir a la página principal</a></p>
+</div>
 
 
+{%endblock%}
+
+
+
+
+{%block extrajs%}
+<script src="{% static 'js/login.js' %}"></script>
 {%endblock%}
