@@ -130,7 +130,7 @@ box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
 
 .inputs{
-  width: 97%;
+  width: 100%;
   padding: 6px 0;
   outline: none;
   border: 2px solid #ccc;

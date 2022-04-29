@@ -13,6 +13,8 @@ from django.contrib.auth import authenticate, login
 class Articulos(View):
     
     def get (self, request):
+        user=User.objects.get(id=10)
+        print(user.check_password("Wilfer2001"))
         articles = Article.objects.select_related('author').order_by('-id')
         return render(request,"principal/articulos.html",{'articles':articles})
     

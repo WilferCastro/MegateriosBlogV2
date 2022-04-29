@@ -29,6 +29,7 @@ window.onload = () => {
 
   document.getElementById("button_filev3").addEventListener("click", () => {
     image.src = "/static/img/avatar.jpg";
+    file.value=''
     document.getElementById("button_filev3").style.display = "none"
   })
 
